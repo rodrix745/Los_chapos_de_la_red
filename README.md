@@ -13,8 +13,6 @@ A diferencia de las herramientas tradicionales de presupuesto, FinLearn combina 
 * **Escenarios de decisiones:** Presenta cartas con escenarios cotidianos donde el usuario elige entre distintas opciones para avanzar en un ciclo mensual de 30 días.
 * **Barras de estado dinámicas:** Las decisiones en el simulador afectan inmediatamente cinco barras de estado: Ingresos, Gastos, Ahorros, Inversión y Diversión. Al finalizar el mes, el sistema evalúa si hubo éxito o un "desastre financiero" que obligue a reiniciar el ciclo.
 * **Sistema de Gamificación:** Otorga experiencia (XP) por lecciones completadas, calcula rachas diarias de actividad y asigna niveles e insignias de acuerdo con el progreso, asegurando no otorgar la misma recompensa dos veces.
-* **Explicaciones con Inteligencia Artificial:** Integra un servicio de IA externo para brindar explicaciones claras sobre el presupuesto. Requiere el consentimiento explícito del usuario y solo envía datos agregados, protegiendo la privacidad. Si la IA tarda más de 10 segundos o falla, el sistema provee una explicación básica predeterminada basada en reglas.
-* **Panel de administración dinámico:** Permite a los administradores gestionar cuentas, modificar roles y crear, editar o despublicar rutas, lecciones y escenarios sin necesidad de modificar el código fuente de la aplicación.
 
 ## 👥 Actores del sistema
 * **Usuario aprendiz:** Persona que interactúa con la plataforma para tomar lecciones, acumular experiencia (XP) y construir su plan de ingresos simulado.
