@@ -7,9 +7,9 @@ import { users } from './schema.js'
 const JWT_SECRET = process.env.JWT_SECRET ?? 'dev-secret'
 
 const registerSchema = z.object({
-  email: z.string().email(),
+  email: z.email(),
   nickname: z.string(),
-  password: z.string(),
+  password: z.string().min(8),
 })
 
 function fieldErrors(zodError) {

@@ -18,7 +18,7 @@ afterAll(async () => {
 it('session: with the login token, GET /api/me returns the nickname', async () => {
   const register = await request(app)
     .post('/api/register')
-    .send({ email: 'me@email.com', nickname: 'mey', password: 'me-pass' })
+    .send({ email: 'me@email.com', nickname: 'mey', password: 'me-password' })
   expect(register.status).toBe(201) // sanity: the account exists before using the token
 
   const res = await request(app)
