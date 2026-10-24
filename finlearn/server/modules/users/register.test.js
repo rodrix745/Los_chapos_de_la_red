@@ -18,9 +18,25 @@ afterAll(async () => {
 it('register: with a new email, nickname and password → responds 201, token and nickname', async () => {
   const res = await request(app)
     .post('/api/register')
-    .send({ email: 'ana@example.com', nickname: 'ana', password: 'secreto123' })
+    .send({ email: 'anna@example.com', nickname: 'anna', password: 'secret123' })
 
   expect(res.status).toBe(201)
-  expect(res.body.user.nickname).toBe('ana')
+  expect(res.body.user.nickname).toBe('anna')
   expect(res.body.token).toBeTruthy()
+})
+
+// AC3: registering with an email already used → sees a clear error message and does not stay authenticated
+it('register: with an email already used → responds 409 with a message and no token', async () => {
+  const first = await request(app)
+    .post('/api/register')
+    .send({ email: 'duplicate@example.com', nickname: 'first', password: 'password123' })
+  expect(first.status).toBe(201) // sanity: the first registration succeeds
+
+  const res = await request(app)
+    .post('/api/register')
+    .send({ email: 'duplicate@example.com', nickname: 'second', password: 'other-password' })
+
+  expect(res.status).toBe(409)
+  expect(res.body.message).toBeTruthy()
+  expect(res.body.token).toBeUndefined()
 })
