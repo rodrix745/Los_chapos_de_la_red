@@ -62,6 +62,18 @@ it('register: with a short password → responds 400 with a field error and no t
   expect(res.body.token).toBeUndefined()
 })
 
+it('register: with a missing field → responds 400 with a field error covering each missing one', async () => {
+  const res = await request(app)
+    .post('/api/register')
+    .send({})
+
+  expect(res.status).toBe(400)
+  expect(res.body.errors.email).toBeTruthy()
+  expect(res.body.errors.nickname).toBeTruthy()
+  expect(res.body.errors.password).toBeTruthy()
+  expect(res.body.token).toBeUndefined()
+})
+
 // Plan: password stored securely (hashed)
 it('register: the password is stored hashed, not in plain text', async () => {
   const res = await request(app)
