@@ -41,6 +41,17 @@ it('register: with an email already used → responds 409 with a message and no 
   expect(res.body.token).toBeUndefined()
 })
 
+// Plan: input validated before saving
+it('register: with an invalid email → responds 400 with a field error and no token', async () => {
+  const res = await request(app)
+    .post('/api/register')
+    .send({ email: 'not-an-email', nickname: 'badmail', password: 'long-enough' })
+
+  expect(res.status).toBe(400)
+  expect(res.body.errors.email).toBeTruthy()
+  expect(res.body.token).toBeUndefined()
+})
+
 // Plan: password stored securely (hashed)
 it('register: the password is stored hashed, not in plain text', async () => {
   const res = await request(app)

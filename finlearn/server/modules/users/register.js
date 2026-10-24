@@ -1,3 +1,4 @@
+import { z } from 'zod'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { db } from '../../db.js'
@@ -5,8 +6,26 @@ import { users } from './schema.js'
 
 const JWT_SECRET = process.env.JWT_SECRET ?? 'dev-secret'
 
+const registerSchema = z.object({
+  email: z.string().email(),
+  nickname: z.string(),
+  password: z.string(),
+})
+
+function fieldErrors(zodError) {
+  const errors = {}
+  for (const issue of zodError.issues) {
+    errors[issue.path[0]] = issue.message
+  }
+  return errors
+}
+
 export async function register(req, res) {
-  const { email, nickname, password } = req.body
+  const parsed = registerSchema.safeParse(req.body)
+  if (!parsed.success) {
+    return res.status(400).json({ errors: fieldErrors(parsed.error) })
+  }
+  const { email, nickname, password } = parsed.data
   const passwordHash = await bcrypt.hash(password, 10)
   try {
     const [user] = await db
