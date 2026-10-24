@@ -1,14 +1,14 @@
-// Database connection. Values come from the root .env loaded via env.js.
+// Database connection. Values come from the validated env in settings/env.js.
 import { Pool } from 'pg'
 import { drizzle } from 'drizzle-orm/node-postgres'
-import './env.js'
+import { env } from './env.js'
 
 export const pool = new Pool({
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  host: process.env.DB_HOST,
-  port: Number(process.env.DB_PORT),
-  database: process.env.DB_NAME,
+  user: env.DB_USER,
+  password: env.DB_PASSWORD,
+  host: env.DB_HOST,
+  port: env.DB_PORT,
+  database: env.DB_NAME,
 })
 
 export const db = drizzle(pool)

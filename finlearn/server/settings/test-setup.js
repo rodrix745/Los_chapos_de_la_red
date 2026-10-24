@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url'
 import { existsSync } from 'node:fs'
 import { Pool } from 'pg'
 
-const envFile = fileURLToPath(new URL('../.env', import.meta.url))
+const envFile = fileURLToPath(new URL('../../.env', import.meta.url))
 if (existsSync(envFile)) {
   loadEnvFile(envFile)
 }

@@ -1,7 +1,7 @@
 import { beforeAll, afterAll, it, expect } from 'vitest'
 import request from 'supertest'
 import { createApp } from '../../app.js'
-import { pool, ensureSchema } from '../../db.js'
+import { pool, ensureSchema } from '../../settings/db.js'
 
 const app = createApp()
 

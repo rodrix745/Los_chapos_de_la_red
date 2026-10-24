@@ -2,11 +2,11 @@ import { z } from 'zod'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { eq } from 'drizzle-orm'
-import { db } from '../../db.js'
+import { db } from '../../settings/db.js'
 import { users } from './schema.js'
 import { fieldErrors } from './field-errors.js'
 
-import { JWT_SECRET } from '../../env.js'
+import { JWT_SECRET } from '../../settings/env.js'
 
 const loginSchema = z.object({
   email: z.string().min(1),
