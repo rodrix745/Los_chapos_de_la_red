@@ -1,0 +1,17 @@
+# Dependencias
+node_modules/
+
+# Entorno
+.env
+.env.local
+
+# Logs
+*.log
+
+# Sistema operativo / editor
+.DS_Store
+.idea/
+.vscode/
+
+# Build de frontend (se genera)
+dist/
