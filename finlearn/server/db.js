@@ -1,11 +1,18 @@
-// Connection to PostgreSQL. The URL comes from DATABASE_URL; if it is not
-// defined, we use the project's local convention.
+// Single .env file at the finlearn root, shared by server and client.
+// Loaded relative to this module so it works no matter the working directory.
+import { loadEnvFile } from 'node:process'
+import { fileURLToPath } from 'node:url'
+import { existsSync } from 'node:fs'
 import { Pool } from 'pg'
 import { drizzle } from 'drizzle-orm/node-postgres'
 
+const envFile = fileURLToPath(new URL('../.env', import.meta.url))
+if (existsSync(envFile)) {
+  loadEnvFile(envFile)
+}
+
 export const pool = new Pool({
-  connectionString:
-    process.env.DATABASE_URL ?? 'postgres://postgres:postgres_password@localhost:5432/finlearn',
+  connectionString: process.env.DATABASE_URL,
 })
 
 export const db = drizzle(pool)
