@@ -5,7 +5,7 @@ import { db } from '../../db.js'
 import { users } from './schema.js'
 import { fieldErrors } from './field-errors.js'
 
-const JWT_SECRET = process.env.JWT_SECRET ?? 'dev-secret'
+const JWT_SECRET = process.env.JWT_SECRET
 
 const registerSchema = z.object({
   email: z.email(),

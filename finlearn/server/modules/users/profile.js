@@ -3,7 +3,7 @@ import { eq } from 'drizzle-orm'
 import { db } from '../../db.js'
 import { users } from './schema.js'
 
-const JWT_SECRET = process.env.JWT_SECRET ?? 'dev-secret'
+const JWT_SECRET = process.env.JWT_SECRET
 
 export async function profile(req, res) {
   const [, token] = (req.headers.authorization ?? '').split(' ')
