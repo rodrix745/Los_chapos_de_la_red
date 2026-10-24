@@ -5,7 +5,7 @@ import { db } from '../../settings/db.js'
 import { users } from './schema.js'
 import { fieldErrors } from './field-errors.js'
 
-import { JWT_SECRET } from '../../settings/env.js'
+import { JWT_SECRET, ACCESS_TOKEN_LIFETIME } from '../../settings/env.js'
 
 const registerSchema = z.object({
   email: z.email(),
@@ -25,7 +25,7 @@ export async function register(req, res) {
       .insert(users)
       .values({ email, nickname, password: passwordHash })
       .returning({ id: users.id, email: users.email, nickname: users.nickname })
-    const token = jwt.sign({ sub: user.id }, JWT_SECRET)
+    const token = jwt.sign({ sub: user.id }, JWT_SECRET, { expiresIn: ACCESS_TOKEN_LIFETIME })
     res.status(201).json({ token, user })
   } catch (err) {
     // Drizzle wraps the pg error, so the unique-violation code may sit in the cause.

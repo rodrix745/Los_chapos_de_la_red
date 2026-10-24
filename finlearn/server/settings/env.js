@@ -15,6 +15,9 @@ const envSchema = z.object({
   DB_PORT: z.coerce.number().int().positive(),
   DB_NAME: z.string().min(1),
   JWT_SECRET: z.string().min(1),
+  // durations in jwt format, e.g. 30m, 12h, 7d
+  ACCESS_TOKEN_LIFETIME: z.string().regex(/^[1-9]\d*[smhd]$/).default('15m'),
+  REFRESH_TOKEN_LIFETIME: z.string().regex(/^[1-9]\d*[smhd]$/).default('7d'),
 })
 
 const parsed = envSchema.safeParse(process.env)
@@ -29,3 +32,6 @@ if (!parsed.success) {
 
 export const env = parsed.data
 export const JWT_SECRET = env.JWT_SECRET
+export const ACCESS_TOKEN_LIFETIME = env.ACCESS_TOKEN_LIFETIME
+// Reserved for the refresh-token story: not consumed anywhere yet.
+export const REFRESH_TOKEN_LIFETIME = env.REFRESH_TOKEN_LIFETIME

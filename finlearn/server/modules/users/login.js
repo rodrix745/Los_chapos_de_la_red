@@ -6,7 +6,7 @@ import { db } from '../../settings/db.js'
 import { users } from './schema.js'
 import { fieldErrors } from './field-errors.js'
 
-import { JWT_SECRET } from '../../settings/env.js'
+import { JWT_SECRET, ACCESS_TOKEN_LIFETIME } from '../../settings/env.js'
 
 const loginSchema = z.object({
   email: z.string().min(1),
@@ -26,7 +26,7 @@ export async function login(req, res) {
   if (!passwordMatches) {
     return res.status(401).json({ message: 'Wrong email or password' })
   }
-  const token = jwt.sign({ sub: user.id }, JWT_SECRET)
+  const token = jwt.sign({ sub: user.id }, JWT_SECRET, { expiresIn: ACCESS_TOKEN_LIFETIME })
   res.status(200).json({
     token,
     user: { id: user.id, email: user.email, nickname: user.nickname },
