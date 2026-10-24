@@ -1,13 +1,24 @@
+import { z } from 'zod'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { eq } from 'drizzle-orm'
 import { db } from '../../db.js'
 import { users } from './schema.js'
+import { fieldErrors } from './field-errors.js'
 
 const JWT_SECRET = process.env.JWT_SECRET ?? 'dev-secret'
 
+const loginSchema = z.object({
+  email: z.string().min(1),
+  password: z.string().min(1),
+})
+
 export async function login(req, res) {
-  const { email, password } = req.body
+  const parsed = loginSchema.safeParse(req.body)
+  if (!parsed.success) {
+    return res.status(400).json({ errors: fieldErrors(parsed.error) })
+  }
+  const { email, password } = parsed.data
   const [user] = await db.select().from(users).where(eq(users.email, email))
   const passwordMatches = user
     ? await bcrypt.compare(password, user.password)

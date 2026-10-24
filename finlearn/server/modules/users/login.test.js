@@ -48,3 +48,15 @@ it('login: with wrong email or password → responds 401 with a message and no t
   expect(wrongEmail.body.message).toBeTruthy()
   expect(wrongEmail.body.token).toBeUndefined()
 })
+
+// Plan: login validates required fields before checking credentials
+it('login: with a missing field → responds 400 with a field error', async () => {
+  const res = await request(app)
+    .post('/api/login')
+    .send({})
+
+  expect(res.status).toBe(400)
+  expect(res.body.errors.email).toBeTruthy()
+  expect(res.body.errors.password).toBeTruthy()
+  expect(res.body.token).toBeUndefined()
+})

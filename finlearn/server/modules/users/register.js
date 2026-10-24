@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { db } from '../../db.js'
 import { users } from './schema.js'
+import { fieldErrors } from './field-errors.js'
 
 const JWT_SECRET = process.env.JWT_SECRET ?? 'dev-secret'
 
@@ -11,14 +12,6 @@ const registerSchema = z.object({
   nickname: z.string(),
   password: z.string().min(8),
 })
-
-function fieldErrors(zodError) {
-  const errors = {}
-  for (const issue of zodError.issues) {
-    errors[issue.path[0]] = issue.message
-  }
-  return errors
-}
 
 export async function register(req, res) {
   const parsed = registerSchema.safeParse(req.body)
