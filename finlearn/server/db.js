@@ -1,11 +1,14 @@
 // Connection to PostgreSQL. The URL comes from DATABASE_URL; if it is not
 // defined, we use the project's local convention.
 import { Pool } from 'pg'
+import { drizzle } from 'drizzle-orm/node-postgres'
 
 export const pool = new Pool({
   connectionString:
     process.env.DATABASE_URL ?? 'postgres://postgres:postgres_password@localhost:5432/finlearn',
 })
+
+export const db = drizzle(pool)
 
 export async function ensureSchema() {
   await pool.query(`

@@ -1,15 +1,16 @@
 import jwt from 'jsonwebtoken'
-import { pool } from '../../db.js'
+import { eq } from 'drizzle-orm'
+import { db } from '../../db.js'
+import { users } from './schema.js'
 
 const JWT_SECRET = process.env.JWT_SECRET ?? 'dev-secret'
 
 export async function profile(req, res) {
   const [, token] = (req.headers.authorization ?? '').split(' ')
   const payload = jwt.verify(token, JWT_SECRET)
-  const { rows } = await pool.query(
-    'SELECT id, email, nickname FROM users WHERE id = $1',
-    [payload.sub],
-  )
-  const user = rows[0]
+  const [user] = await db
+    .select({ id: users.id, email: users.email, nickname: users.nickname })
+    .from(users)
+    .where(eq(users.id, payload.sub))
   res.status(200).json(user)
 }
