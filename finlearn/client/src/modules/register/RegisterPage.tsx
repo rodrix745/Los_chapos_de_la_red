@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react"
-import { useNavigate } from "@tanstack/react-router"
+import { useNavigate, Link } from "@tanstack/react-router"
 import { registerService } from "./services/register-service"
 
 export function RegisterPage() {
@@ -56,9 +56,9 @@ export function RegisterPage() {
       </form>
       <p className="mt-4 text-sm text-center">
         Already have an account?{" "}
-        <a href="/login" className="text-emerald-400 underline">
+        <Link to="/login" className="text-emerald-400 underline">
           Log in
-        </a>
+        </Link>
       </p>
     </div>
   )

@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react"
-import { useNavigate } from "@tanstack/react-router"
+import { useNavigate, Link } from "@tanstack/react-router"
 import { loginService } from "./services/login-service"
 
 export function LoginPage() {
@@ -57,9 +57,9 @@ export function LoginPage() {
       </form>
       <p className="mt-4 text-sm text-center">
         No account yet?{" "}
-        <a href="/register" className="text-emerald-400 underline">
+        <Link to="/register" className="text-emerald-400 underline">
           Create one
-        </a>
+        </Link>
       </p>
     </div>
   )
