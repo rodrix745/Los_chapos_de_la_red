@@ -5,12 +5,14 @@ import { registerService } from "./services/register-service"
 export function RegisterPage() {
   const navigate = useNavigate()
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
+  const [formError, setFormError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     const formData = new FormData(event.currentTarget)
     setFieldErrors({})
+    setFormError(null)
     setSubmitting(true)
     try {
       const { token } = await registerService({
@@ -21,7 +23,11 @@ export function RegisterPage() {
       localStorage.setItem("token", token)
       await navigate({ to: "/" })
     } catch (error: any) {
-      setFieldErrors(error?.data?.errors ?? {})
+      if (error?.status === 400) {
+        setFieldErrors(error.data.errors ?? {})
+      } else {
+        setFormError(error?.data?.message ?? "Something went wrong")
+      }
     } finally {
       setSubmitting(false)
     }
@@ -46,6 +52,7 @@ export function RegisterPage() {
           <input name="password" type="password" className="rounded-md bg-gray-800 px-3 py-2 text-white" />
           {fieldErrors.password && <span className="text-red-400 text-sm">{fieldErrors.password}</span>}
         </label>
+        {formError && <span className="text-red-400 text-sm">{formError}</span>}
         <button
           type="submit"
           disabled={submitting}
