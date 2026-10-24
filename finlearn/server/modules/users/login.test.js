@@ -29,3 +29,22 @@ it('login: with correct credentials → responds 200, token and nickname', async
   expect(res.body.token).toBeTruthy()
   expect(res.body.user.nickname).toBe('loginny')
 })
+
+// AC3: logging in with wrong data → sees a clear error message and does not stay authenticated
+it('login: with wrong email or password → responds 401 with a message and no token', async () => {
+  const wrongPassword = await request(app)
+    .post('/api/login')
+    .send({ email: 'login-ok@email.com', password: 'wrong-pass' })
+
+  expect(wrongPassword.status).toBe(401)
+  expect(wrongPassword.body.message).toBeTruthy()
+  expect(wrongPassword.body.token).toBeUndefined()
+
+  const wrongEmail = await request(app)
+    .post('/api/login')
+    .send({ email: 'ghost@email.com', password: 'login-pass' })
+
+  expect(wrongEmail.status).toBe(401)
+  expect(wrongEmail.body.message).toBeTruthy()
+  expect(wrongEmail.body.token).toBeUndefined()
+})
