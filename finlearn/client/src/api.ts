@@ -4,7 +4,7 @@ function token() {
   return localStorage.getItem('token')
 }
 
-export async function api<T>(path: string, options: { method?: string; body?: unknown } = {}): Promise<T> {
+export async function api<T>(path: string, options: { method?: string; body?: unknown; signal?: AbortSignal } = {}): Promise<T> {
   const headers: Record<string, string> = { 'Content-Type': 'application/json' }
   const currentToken = token()
   if (currentToken) {
