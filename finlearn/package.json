@@ -1,0 +1,12 @@
+{
+  "name": "finlearn",
+  "private": true,
+  "scripts": {
+    "dev:server": "pnpm -C server start",
+    "dev:client": "pnpm -C client dev",
+    "dev": "concurrently -n server,client -c blue,green \"pnpm run dev:server\" \"pnpm run dev:client\""
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.6"
+  }
+}
