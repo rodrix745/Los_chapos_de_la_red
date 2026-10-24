@@ -1,15 +1,7 @@
-// Single .env file at the finlearn root, shared by server and client.
-// Loaded relative to this module so it works no matter the working directory.
-import { loadEnvFile } from 'node:process'
-import { fileURLToPath } from 'node:url'
-import { existsSync } from 'node:fs'
+// Database connection. Values come from the root .env loaded via env.js.
 import { Pool } from 'pg'
 import { drizzle } from 'drizzle-orm/node-postgres'
-
-const envFile = fileURLToPath(new URL('../.env', import.meta.url))
-if (existsSync(envFile)) {
-  loadEnvFile(envFile)
-}
+import './env.js'
 
 export const pool = new Pool({
   user: process.env.DB_USER,

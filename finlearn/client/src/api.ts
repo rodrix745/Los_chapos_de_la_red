@@ -15,7 +15,13 @@ export async function api<T>(path: string, options: { method?: string; body?: un
     headers,
     body: options.body !== undefined ? JSON.stringify(options.body) : undefined,
   })
-  const data = await response.json()
+  const raw = await response.text()
+  let data: unknown = raw
+  try {
+    data = JSON.parse(raw)
+  } catch {
+    // non-JSON responses (error pages, empty bodies) keep the raw text as data
+  }
   if (!response.ok) {
     throw { status: response.status, data }
   }

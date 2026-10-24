@@ -3,7 +3,7 @@ import { eq } from 'drizzle-orm'
 import { db } from '../../db.js'
 import { users } from './schema.js'
 
-const JWT_SECRET = process.env.JWT_SECRET
+import { JWT_SECRET } from '../../env.js'
 
 const SESSION_ERROR = 'Invalid or expired session'
 

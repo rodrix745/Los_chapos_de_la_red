@@ -14,8 +14,10 @@ export function HomePage() {
     }
     profileService()
       .then(setProfile)
-      .catch(() => {
-        localStorage.removeItem("token")
+      .catch((error) => {
+        if (error?.status === 401) {
+          localStorage.removeItem("token")
+        }
       })
       .finally(() => setLoading(false))
   }, [])

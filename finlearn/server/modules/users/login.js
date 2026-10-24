@@ -6,7 +6,7 @@ import { db } from '../../db.js'
 import { users } from './schema.js'
 import { fieldErrors } from './field-errors.js'
 
-const JWT_SECRET = process.env.JWT_SECRET
+import { JWT_SECRET } from '../../env.js'
 
 const loginSchema = z.object({
   email: z.string().min(1),
