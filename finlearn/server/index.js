@@ -7,5 +7,5 @@ await ensureSchema()
 const app = createApp()
 
 app.listen(env.PORT, () => {
-  console.log(`FinLearn backend escuchando en http://localhost:${env.PORT}`)
+  console.log(`FinLearn backend listening on http://localhost:${env.PORT}`)
 })

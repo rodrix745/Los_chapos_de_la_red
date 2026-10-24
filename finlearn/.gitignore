@@ -1,17 +1,17 @@
-# Dependencias
+# Dependencies
 node_modules/
 
-# Entorno
+# Environment
 .env
 .env.local
 
 # Logs
 *.log
 
-# Sistema operativo / editor
+# OS / editor
 .DS_Store
 .idea/
 .vscode/
 
-# Build de frontend (se genera)
+# Frontend build (generated)
 dist/

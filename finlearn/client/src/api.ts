@@ -5,7 +5,10 @@ function token() {
 }
 
 export async function api<T>(path: string, options: { method?: string; body?: unknown; signal?: AbortSignal } = {}): Promise<T> {
-  const headers: Record<string, string> = { 'Content-Type': 'application/json' }
+  const headers: Record<string, string> = {}
+  if (options.body !== undefined) {
+    headers['Content-Type'] = 'application/json'
+  }
   const currentToken = token()
   if (currentToken) {
     headers.Authorization = `Bearer ${currentToken}`

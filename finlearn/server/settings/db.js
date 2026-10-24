@@ -13,6 +13,9 @@ export const pool = new Pool({
 
 export const db = drizzle(pool)
 
+// NOTE: keep this table definition in sync with modules/users/schema.js
+// (the Drizzle model). Until the schema is pushed with drizzle-kit, this
+// CREATE TABLE is the only thing guaranteeing the table exists at boot.
 export async function ensureSchema() {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS users (

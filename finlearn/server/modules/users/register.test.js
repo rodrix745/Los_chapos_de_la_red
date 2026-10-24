@@ -86,4 +86,5 @@ it('register: the password is stored hashed, not in plain text', async () => {
     ['hash@email.com'],
   )
   expect(rows[0].password).not.toBe('plain-secret')
+  expect(rows[0].password).toMatch(/^\$2[aby]\$/) // bcrypt format, cost prefix included
 })
