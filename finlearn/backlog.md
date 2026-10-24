@@ -1,6 +1,7 @@
 # FinLearn — Backlog
 
 ## Contexto
+
 FinLearn: app web gamificada para enseñar finanzas personales a usuarios comunes, con módulo teórico (lecciones + quizzes con EXP), simulador de decisiones financieras (mazo de cartas, 5 barras, ciclo mensual de 30 días) y perfil con logros y estadísticas. Proyecto de curso.
 
 **Stack:** React + Vite (frontend) · Node/Express (backend) · PostgreSQL · Roles: jugador y admin
@@ -8,7 +9,8 @@ FinLearn: app web gamificada para enseñar finanzas personales a usuarios comune
 **Decisiones caras:** Roles y permisos (desde el día 1; el resto no aplica)
 
 ## Backlog
-1. Como **usuario**, quiero **registrarme e iniciar sesión**, para que **mi progreso quede guardado bajo mi identidad**.
+
+1. Como **usuario**, quiero **registrarme e iniciar sesión**, para que **mi progreso quede guardado bajo mi identidad**. (completado)
 2. Como **usuario**, quiero **leer una lección conceptual breve y completar su quiz**, para que **aprenda el concepto y gane EXP**. Requiere: #1
 3. Como **usuario**, quiero **ver mi avatar, apodo, nivel y EXP acumulada en mi perfil**, para que **reconozca mi identidad y avance en la plataforma**. Requiere: #2
 4. Como **usuario**, quiero **jugar cartas con escenarios financieros y ver cómo cada decisión mueve de inmediato las cinco barras (ingresos, gastos, ahorros, inversión, diversión)**, para que **practique decisiones con consecuencias visibles**. Requiere: #1
