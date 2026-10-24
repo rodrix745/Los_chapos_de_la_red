@@ -1,5 +1,5 @@
-// Conexión a PostgreSQL. La URL viene de DATABASE_URL; si no está definida,
-// usamos la convención local del proyecto.
+// Connection to PostgreSQL. The URL comes from DATABASE_URL; if it is not
+// defined, we use the project's local convention.
 import { Pool } from 'pg'
 
 export const pool = new Pool({

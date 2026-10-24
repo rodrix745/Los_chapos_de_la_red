@@ -14,8 +14,8 @@ afterAll(async () => {
   await pool.end()
 })
 
-// AC3 (lado feliz): registro con email nuevo, apodo y contraseña → entra autenticado
-it('registro: con email nuevo, apodo y contraseña → responde 201, token y apodo', async () => {
+// AC3 (happy path): register with a new email, nickname and password → enters already authenticated
+it('register: with a new email, nickname and password → responds 201, token and nickname', async () => {
   const res = await request(app)
     .post('/api/register')
     .send({ email: 'ana@example.com', nickname: 'ana', password: 'secreto123' })
