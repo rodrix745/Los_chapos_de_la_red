@@ -27,6 +27,7 @@ Stack: React + Vite + TypeScript + Tailwind + TanStack Router (client/) · Expre
 - DB access via Drizzle (models in `modules/users/schema.js`). No raw SQL in endpoints. The only raw SQL is `ensureSchema` (CREATE TABLE at boot); keep it in sync with the schema model until the migration story lands.
 - Input validation with Zod. Shape: valid → proceed; 400 `{ errors: { field: message } }`; 409/401 `{ message }`. Register: email format, nickname present, password ≥ 8 chars. Login: required-field presence only.
 - Auth: JWT in `Authorization: Bearer <token>`, signed with sub = user id, exp = ACCESS_TOKEN_LIFETIME. Tokens in localStorage, attached to every request by `client/src/api.ts`.
+- Route protection: `middleware/auth.js` exports `requireAuth` (verifies the token and loads the fresh user row into `req.user`; 401 `{ message: 'Invalid or expired session' }`) and `requireRole('admin')` (403, after requireAuth). Wire protected endpoints through them — never verify tokens inline. Roles: `player` (default, everyone registers as one) and `admin`; no self-service — promote manually via SQL until the admin story.
 - Do not leak internals: generic 401 ("Wrong email or password") for both wrong email and wrong password; session errors return `401 { message: 'Invalid or expired session' }`.
 
 ## Testing

@@ -22,6 +22,7 @@ it('register: with a new email, nickname and password → responds 201, token an
 
   expect(res.status).toBe(201)
   expect(res.body.user.nickname).toBe('anna')
+  expect(res.body.user.role).toBe('player') // no self-service admin: everyone registers as player
   expect(res.body.token).toBeTruthy()
 })
 

@@ -28,6 +28,7 @@ it('login: with correct credentials → responds 200, token and nickname', async
   expect(res.status).toBe(200)
   expect(res.body.token).toBeTruthy()
   expect(res.body.user.nickname).toBe('loginny')
+  expect(res.body.user.role).toBe('player')
 })
 
 // AC3: logging in with wrong data → sees a clear error message and does not stay authenticated

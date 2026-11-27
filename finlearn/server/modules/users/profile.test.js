@@ -29,6 +29,7 @@ it('session: with the login token, GET /api/me returns the nickname', async () =
 
   expect(res.status).toBe(200)
   expect(res.body.nickname).toBe('mey')
+  expect(res.body.role).toBe('player')
 })
 
 // AC3: an invalid or stale session must be refused cleanly, not crash

@@ -22,7 +22,10 @@ export async function ensureSchema() {
       id serial PRIMARY KEY,
       email text NOT NULL UNIQUE,
       nickname text NOT NULL,
-      password text NOT NULL
+      password text NOT NULL,
+      role text NOT NULL DEFAULT 'player'
     )
   `)
+  // Databases created before the role column existed get it on boot.
+  await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS role text NOT NULL DEFAULT 'player'`)
 }

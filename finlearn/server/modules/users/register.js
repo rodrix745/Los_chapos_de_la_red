@@ -24,7 +24,7 @@ export async function register(req, res) {
     const [user] = await db
       .insert(users)
       .values({ email, nickname, password: passwordHash })
-      .returning({ id: users.id, email: users.email, nickname: users.nickname })
+      .returning({ id: users.id, email: users.email, nickname: users.nickname, role: users.role })
     const token = jwt.sign({ sub: user.id }, JWT_SECRET, { expiresIn: ACCESS_TOKEN_LIFETIME })
     res.status(201).json({ token, user })
   } catch (err) {
