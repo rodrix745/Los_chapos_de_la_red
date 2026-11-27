@@ -8,13 +8,16 @@ import { defineConfig, loadEnv } from "vite"
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, "../", "")
   const serverPort = env.PORT ?? "8000"
+  // Docker dev: el proxy corre dentro del contenedor, apuntar al servicio `server`.
+  // SERVER_HOST solo se define en docker-compose.override.yml.
+  const serverHost = env.SERVER_HOST ?? "localhost"
 
   return {
     plugins: [router(), react(), babel({ presets: [reactCompilerPreset()] }), tailwindcss()],
     envDir: "../",
     server: {
       proxy: {
-        "/api": `http://localhost:${serverPort}`,
+        "/api": `http://${serverHost}:${serverPort}`,
       },
     },
   }

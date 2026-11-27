@@ -1,0 +1,35 @@
+# Overrides de desarrollo. Compose lo carga automáticamente junto a
+# docker-compose.yml. Para producción explícito: docker compose -f docker-compose.yml up
+services:
+  db:
+    # Expone Postgres para herramientas locales (psql, DBeaver, ...)
+    ports:
+      - "${DB_PORT:-5432}:5432"
+
+  server:
+    command: node --watch index.js
+    # El bind mount ./server:/app deja el .env raíz fuera del contenedor,
+    # así que inyectamos PORT (el resto hereda del compose base).
+    environment:
+      PORT: ${PORT:-3000}
+    volumes:
+      - ./server:/app
+      # Los node_modules del contenedor ganan sobre los del bind mount
+      - /app/node_modules
+    ports:
+      - "${PORT:-3000}:${PORT:-3000}"
+
+  client:
+    build:
+      context: ./client
+      target: dev
+    command: pnpm dev --host 0.0.0.0
+    environment:
+      # El proxy de Vite corre DENTRO del contenedor: "localhost" no lo alcanza
+      SERVER_HOST: server
+      PORT: ${PORT:-3000}
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
