@@ -1,6 +1,8 @@
 // Database connection. Values come from the validated env in settings/env.js.
 import { Pool } from 'pg'
 import { drizzle } from 'drizzle-orm/node-postgres'
+import { migrate } from 'drizzle-orm/node-postgres/migrator'
+import { fileURLToPath } from 'node:url'
 import { env } from './env.js'
 
 export const pool = new Pool({
@@ -13,19 +15,13 @@ export const pool = new Pool({
 
 export const db = drizzle(pool)
 
-// NOTE: keep this table definition in sync with modules/users/schema.js
-// (the Drizzle model). Until the schema is pushed with drizzle-kit, this
-// CREATE TABLE is the only thing guaranteeing the table exists at boot.
-export async function ensureSchema() {
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS users (
-      id serial PRIMARY KEY,
-      email text NOT NULL UNIQUE,
-      nickname text NOT NULL,
-      password text NOT NULL,
-      role text NOT NULL DEFAULT 'player'
-    )
-  `)
-  // Databases created before the role column existed get it on boot.
-  await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS role text NOT NULL DEFAULT 'player'`)
+// Schema changes: edit the Drizzle model (modules/<domain>/schema.js), then run
+// `pnpm drizzle-kit generate` in server/ and commit the SQL it adds to drizzle/.
+// migrateToLatest applies the pending migrations; it runs at boot and in the
+// tests' beforeAll. Applied migrations are tracked per database (in the
+// drizzle.__drizzle_migrations table), so re-running is a no-op.
+const MIGRATIONS_FOLDER = fileURLToPath(new URL('../drizzle', import.meta.url))
+
+export async function migrateToLatest() {
+  await migrate(db, { migrationsFolder: MIGRATIONS_FOLDER })
 }

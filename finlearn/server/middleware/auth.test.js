@@ -2,7 +2,7 @@ import { beforeAll, afterAll, it, expect } from 'vitest'
 import express from 'express'
 import request from 'supertest'
 import { createApp } from '../app.js'
-import { pool, ensureSchema } from '../settings/db.js'
+import { pool, migrateToLatest } from '../settings/db.js'
 import { requireAuth, requireRole } from './auth.js'
 
 // requireAuth is exercised end-to-end through GET /api/me (see
@@ -16,7 +16,7 @@ adminApp.get('/admin-only', requireAuth, requireRole('admin'), (req, res) => {
 const app = createApp()
 
 beforeAll(async () => {
-  await ensureSchema()
+  await migrateToLatest()
   await pool.query('DELETE FROM users')
 })
 

@@ -1,8 +1,8 @@
 import { createApp } from "./app.js"
-import { ensureSchema } from "./settings/db.js"
+import { migrateToLatest } from "./settings/db.js"
 import { env } from "./settings/env.js"
 
-await ensureSchema()
+await migrateToLatest()
 
 const app = createApp()
 

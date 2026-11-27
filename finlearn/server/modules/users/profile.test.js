@@ -2,13 +2,13 @@ import { beforeAll, afterAll, it, expect } from 'vitest'
 import request from 'supertest'
 import jwt from 'jsonwebtoken'
 import { createApp } from '../../app.js'
-import { pool, ensureSchema } from '../../settings/db.js'
+import { pool, migrateToLatest } from '../../settings/db.js'
 import { JWT_SECRET } from '../../settings/env.js'
 
 const app = createApp()
 
 beforeAll(async () => {
-  await ensureSchema()
+  await migrateToLatest()
   await pool.query('DELETE FROM users')
 })
 
