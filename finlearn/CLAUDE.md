@@ -12,6 +12,7 @@ Stack: React + Vite + TypeScript + Tailwind + TanStack Router (client/) · Expre
 - pnpm everywhere.
 - Docker Compose runs db, server and client (no local Node/Postgres needed). Developer guide (quickstart, tests, production): `docs/docker-guide.md` (Spanish doc).
   - `docker-compose.override.yml` is auto-loaded by Compose and is dev-only (hot-reload, exposed ports). Production must run explicitly with `docker compose -f docker-compose.yml up`.
+- GitHub Actions CI: `.github/workflows/ci.yml` lives at the repo root (one level above finlearn/), not in this directory. Runs on push/PRs touching finlearn/: server tests (Postgres 17 service container, env vars set at job level — no .env in CI), client lint+build, and `docker compose -f docker-compose.yml build` (production images only). Developer doc (Spanish): `docs/ci-guide.md`.
 - Keep functionality and refactor in separate commits.
 
 ## Environment

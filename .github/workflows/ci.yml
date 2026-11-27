@@ -1,0 +1,123 @@
+# CI de FinLearn. El proyecto vive en el subdirectorio finlearn/, por lo que
+# todos los jobs usan ese working-directory. Tres jobs en paralelo:
+# 1. server-tests: tests de Vitest contra un Postgres real (service container).
+# 2. client: lint + build de TypeScript/Vite.
+# 3. docker: valida los Dockerfiles y docker-compose.yml construyendo producción.
+name: CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'finlearn/**'
+      - '.github/workflows/ci.yml'
+  pull_request:
+    paths:
+      - 'finlearn/**'
+      - '.github/workflows/ci.yml'
+  workflow_dispatch:
+
+# Cancela las ejecuciones supersededas de un mismo PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+defaults:
+  run:
+    working-directory: finlearn
+
+jobs:
+  server-tests:
+    name: Server tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine # misma versión que docker-compose.yml
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: finlearn
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      # No hay .env en CI (está gitignoreado): settings/env.js y
+      # settings/test-setup.js leen estas variables directamente.
+      # test-setup.js crea y usa finlearn_test, nunca la base real.
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_HOST: localhost
+      DB_PORT: 5432
+      DB_NAME: finlearn
+      JWT_SECRET: ci-only-secret
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24 # misma versión que los Dockerfiles
+          cache: pnpm
+          cache-dependency-path: finlearn/server/pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        working-directory: finlearn/server
+
+      - name: Run tests
+        run: pnpm test
+        working-directory: finlearn/server
+
+  client:
+    name: Client lint and build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+          cache-dependency-path: finlearn/client/pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        working-directory: finlearn/client
+
+      # Añadir aquí `pnpm test` cuando el cliente tenga tests reales
+      - name: Lint
+        run: pnpm lint
+        working-directory: finlearn/client
+
+      - name: Build
+        run: pnpm build
+        working-directory: finlearn/client
+
+  docker:
+    name: Docker build
+    runs-on: ubuntu-latest
+    env:
+      # Placeholders para la interpolación de variables del compose.
+      # El build no los consume, solo evita los warnings de valores vacíos.
+      DB_USER: ci
+      DB_PASSWORD: ci
+      DB_NAME: ci
+      JWT_SECRET: ci
+    steps:
+      - uses: actions/checkout@v4
+
+      # -f docker-compose.yml: excluye el override de desarrollo (target dev de
+      # Vite) y construye las imágenes de producción, igual que en deploy.
+      - name: Build production images
+        run: docker compose -f docker-compose.yml build server client
