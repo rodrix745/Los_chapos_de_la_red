@@ -15,11 +15,7 @@ export const pool = new Pool({
 
 export const db = drizzle(pool)
 
-// Schema changes: edit the Drizzle model (modules/<domain>/schema.js), then run
-// `pnpm drizzle-kit generate` in server/ and commit the SQL it adds to drizzle/.
-// migrateToLatest applies the pending migrations; it runs at boot and in the
-// tests' beforeAll. Applied migrations are tracked per database (in the
-// drizzle.__drizzle_migrations table), so re-running is a no-op.
+// No-op when nothing is pending; applied migrations are tracked per database.
 const MIGRATIONS_FOLDER = fileURLToPath(new URL('../drizzle', import.meta.url))
 
 export async function migrateToLatest() {

@@ -5,7 +5,6 @@ export const users = pgTable('users', {
   email: text('email').notNull().unique(),
   nickname: text('nickname').notNull(),
   password: text('password').notNull(),
-  // 'player' (default) or 'admin'. No self-service: promotion is manual
-  // (SQL) until the admin story lands.
+  // 'player' (default) or 'admin'; no self-service promotion.
   role: text('role').notNull().default('player'),
 })

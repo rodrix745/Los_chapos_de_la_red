@@ -1,8 +1,5 @@
-# CI de FinLearn. El proyecto vive en el subdirectorio finlearn/, por lo que
-# todos los jobs usan ese working-directory. Tres jobs en paralelo:
-# 1. server-tests: tests de Vitest contra un Postgres real (service container).
-# 2. client: lint + build de TypeScript/Vite.
-# 3. docker: valida los Dockerfiles y docker-compose.yml construyendo producción.
+# FinLearn CI. The project lives in the finlearn/ subdirectory of the repo;
+# all jobs use it as working-directory.
 name: CI
 
 on:
@@ -17,7 +14,7 @@ on:
       - '.github/workflows/ci.yml'
   workflow_dispatch:
 
-# Cancela las ejecuciones supersededas de un mismo PR
+# Cancel superseded runs of the same PR.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
@@ -32,7 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:17-alpine # misma versión que docker-compose.yml
+        image: postgres:17-alpine
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
@@ -45,9 +42,7 @@ jobs:
           --health-timeout 5s
           --health-retries 10
     env:
-      # No hay .env en CI (está gitignoreado): settings/env.js y
-      # settings/test-setup.js leen estas variables directamente.
-      # test-setup.js crea y usa finlearn_test, nunca la base real.
+      # No .env in CI (gitignored): the server reads these directly.
       DB_USER: postgres
       DB_PASSWORD: postgres
       DB_HOST: localhost
@@ -63,7 +58,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 24 # misma versión que los Dockerfiles
+          node-version: 24
           cache: pnpm
           cache-dependency-path: finlearn/server/pnpm-lock.yaml
 
@@ -95,7 +90,7 @@ jobs:
         run: pnpm install --frozen-lockfile
         working-directory: finlearn/client
 
-      # Añadir aquí `pnpm test` cuando el cliente tenga tests reales
+      # Add `pnpm test` here once the client has real tests.
       - name: Lint
         run: pnpm lint
         working-directory: finlearn/client
@@ -108,8 +103,7 @@ jobs:
     name: Docker build
     runs-on: ubuntu-latest
     env:
-      # Placeholders para la interpolación de variables del compose.
-      # El build no los consume, solo evita los warnings de valores vacíos.
+      # Placeholders for compose interpolation; builds don't consume them.
       DB_USER: ci
       DB_PASSWORD: ci
       DB_NAME: ci
@@ -117,7 +111,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # -f docker-compose.yml: excluye el override de desarrollo (target dev de
-      # Vite) y construye las imágenes de producción, igual que en deploy.
+      # -f docker-compose.yml: production images, no dev override.
       - name: Build production images
         run: docker compose -f docker-compose.yml build server client

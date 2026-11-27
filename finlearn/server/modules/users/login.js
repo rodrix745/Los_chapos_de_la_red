@@ -5,6 +5,7 @@ import { eq } from 'drizzle-orm'
 import { db } from '../../settings/db.js'
 import { users } from './schema.js'
 import { fieldErrors } from './field-errors.js'
+import { ApiError } from '../../middleware/errors.js'
 
 import { JWT_SECRET, ACCESS_TOKEN_LIFETIME } from '../../settings/env.js'
 
@@ -24,7 +25,7 @@ export async function login(req, res) {
     ? await bcrypt.compare(password, user.password)
     : false
   if (!passwordMatches) {
-    return res.status(401).json({ message: 'Wrong email or password' })
+    throw new ApiError(401, 'Wrong email or password')
   }
   const token = jwt.sign({ sub: user.id }, JWT_SECRET, { expiresIn: ACCESS_TOKEN_LIFETIME })
   res.status(200).json({

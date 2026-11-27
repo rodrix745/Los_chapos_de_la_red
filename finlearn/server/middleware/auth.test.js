@@ -4,14 +4,15 @@ import request from 'supertest'
 import { createApp } from '../app.js'
 import { pool, migrateToLatest } from '../settings/db.js'
 import { requireAuth, requireRole } from './auth.js'
+import { errorHandler } from './errors.js'
 
-// requireAuth is exercised end-to-end through GET /api/me (see
-// modules/users/profile.test.js). This suite covers the role guard through a
-// minimal admin-only route, since no admin endpoint exists yet.
+// The role guard has no real endpoint yet; exercised through a minimal
+// admin-only route.
 const adminApp = express()
 adminApp.get('/admin-only', requireAuth, requireRole('admin'), (req, res) => {
   res.status(200).json(req.user)
 })
+adminApp.use(errorHandler)
 
 const app = createApp()
 

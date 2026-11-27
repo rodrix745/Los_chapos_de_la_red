@@ -1,11 +1,9 @@
-// Shared route protection. requireAuth verifies the Bearer token and loads the
-// fresh user row into req.user; requireRole guards endpoints by role. Handlers
-// must never verify tokens inline — wire these through app.js instead.
 import jwt from 'jsonwebtoken'
 import { eq } from 'drizzle-orm'
 import { db } from '../settings/db.js'
 import { users } from '../modules/users/schema.js'
 import { JWT_SECRET } from '../settings/env.js'
+import { ApiError } from './errors.js'
 
 const SESSION_ERROR = 'Invalid or expired session'
 
@@ -15,27 +13,25 @@ export async function requireAuth(req, res, next) {
   try {
     payload = jwt.verify(token, JWT_SECRET)
   } catch {
-    return res.status(401).json({ message: SESSION_ERROR })
+    return next(new ApiError(401, SESSION_ERROR))
   }
   const [user] = await db
     .select({ id: users.id, email: users.email, nickname: users.nickname, role: users.role })
     .from(users)
     .where(eq(users.id, payload.sub))
   if (!user) {
-    return res.status(401).json({ message: SESSION_ERROR })
+    return next(new ApiError(401, SESSION_ERROR))
   }
   req.user = user
   next()
 }
 
-// Usage: app.get('/api/admin/...', requireAuth, requireRole('admin'), handler)
-// The role is read from req.user (fresh from the DB on every request), never
-// from token claims, so a promoted or demoted user changes access without
-// waiting for the token to expire.
+// The role comes from the DB on every request (not from token claims), so
+// promoting or demoting applies without waiting for the token to expire.
 export function requireRole(...roles) {
   return (req, res, next) => {
     if (!req.user || !roles.includes(req.user.role)) {
-      return res.status(403).json({ message: 'You do not have permission to do that' })
+      return next(new ApiError(403, 'You do not have permission to do that'))
     }
     next()
   }

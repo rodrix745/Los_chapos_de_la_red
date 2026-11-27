@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken'
 import { db } from '../../settings/db.js'
 import { users } from './schema.js'
 import { fieldErrors } from './field-errors.js'
+import { ApiError } from '../../middleware/errors.js'
 
 import { JWT_SECRET, ACCESS_TOKEN_LIFETIME } from '../../settings/env.js'
 
@@ -30,7 +31,7 @@ export async function register(req, res) {
   } catch (err) {
     // Drizzle wraps the pg error, so the unique-violation code may sit in the cause.
     if (err.code === '23505' || err.cause?.code === '23505') {
-      return res.status(409).json({ message: 'That email is already registered' })
+      throw new ApiError(409, 'That email is already registered')
     }
     throw err
   }
