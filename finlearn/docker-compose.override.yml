@@ -11,13 +11,13 @@ services:
     # El bind mount ./server:/app deja el .env raíz fuera del contenedor,
     # así que inyectamos PORT (el resto hereda del compose base).
     environment:
-      PORT: ${PORT:-3000}
+      PORT: ${PORT:-8000}
     volumes:
       - ./server:/app
       # Los node_modules del contenedor ganan sobre los del bind mount
       - /app/node_modules
     ports:
-      - "${PORT:-3000}:${PORT:-3000}"
+      - "${PORT:-8000}:${PORT:-8000}"
 
   client:
     build:
@@ -27,7 +27,7 @@ services:
     environment:
       # El proxy de Vite corre DENTRO del contenedor: "localhost" no lo alcanza
       SERVER_HOST: server
-      PORT: ${PORT:-3000}
+      PORT: ${PORT:-8000}
     volumes:
       - ./client:/app
       - /app/node_modules

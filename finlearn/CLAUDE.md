@@ -10,6 +10,8 @@ Stack: React + Vite + TypeScript + Tailwind + TanStack Router (client/) · Expre
 
 ## Tooling
 - pnpm everywhere.
+- Docker Compose runs db, server and client (no local Node/Postgres needed). Developer guide (quickstart, tests, production): `docs/docker-guide.md` (Spanish doc).
+  - `docker-compose.override.yml` is auto-loaded by Compose and is dev-only (hot-reload, exposed ports). Production must run explicitly with `docker compose -f docker-compose.yml up`.
 - Keep functionality and refactor in separate commits.
 
 ## Environment
