@@ -9,8 +9,7 @@ Stack: React + Vite + TypeScript + Tailwind + TanStack Router (client/) · Expre
 - Project docs (backlog.md, plan.md) are the exception: Spanish.
 
 ## Tooling
-- pnpm everywhere. Root scripts delegate to the packages run in their own folder:
-  `dev` / `dev:server` / `dev:client` (concurrently), `test` / `test:server` / `test:client`.
+- pnpm everywhere.
 - Keep functionality and refactor in separate commits.
 
 ## Environment
