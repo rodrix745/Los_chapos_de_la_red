@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react"
 import { useNavigate, Link } from "@tanstack/react-router"
 import { loginService } from "./services/login-service"
+import { isApiError } from "../../api"
 
 export function LoginPage() {
   const navigate = useNavigate()
@@ -21,11 +22,13 @@ export function LoginPage() {
       })
       localStorage.setItem("token", token)
       await navigate({ to: "/" })
-    } catch (error: any) {
-      if (error?.status === 400) {
+    } catch (error) {
+      if (isApiError(error) && error.status === 400) {
         setFieldErrors(error.data.errors ?? {})
+      } else if (isApiError(error)) {
+        setFormError(error.data.message ?? "Something went wrong")
       } else {
-        setFormError(error?.data?.message ?? "Something went wrong")
+        setFormError("Something went wrong")
       }
     } finally {
       setSubmitting(false)

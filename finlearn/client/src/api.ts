@@ -4,6 +4,16 @@ function token() {
   return localStorage.getItem('token')
 }
 
+// Shape thrown when a response is not ok.
+export interface ApiError {
+  status: number
+  data: { errors?: Record<string, string>; message?: string }
+}
+
+export function isApiError(error: unknown): error is ApiError {
+  return typeof error === "object" && error !== null && "status" in error && "data" in error
+}
+
 export async function api<T>(path: string, options: { method?: string; body?: unknown; signal?: AbortSignal } = {}): Promise<T> {
   const headers: Record<string, string> = {}
   if (options.body !== undefined) {

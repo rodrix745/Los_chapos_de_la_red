@@ -4,12 +4,12 @@ import { profileService, type Profile } from "./services/profile-service"
 
 export function HomePage() {
   const [profile, setProfile] = useState<Profile | null>(null)
-  const [loading, setLoading] = useState(true)
+  // No token → no request to make, so we start already "loaded".
+  const [loading, setLoading] = useState(() => localStorage.getItem("token") !== null)
 
   useEffect(() => {
     const token = localStorage.getItem("token")
     if (!token) {
-      setLoading(false)
       return
     }
     profileService()
