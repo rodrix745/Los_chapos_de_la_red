@@ -2,6 +2,7 @@ import { useState, type FormEvent } from "react"
 import { useNavigate, Link } from "@tanstack/react-router"
 import { registerService } from "./services/register-service"
 import { isApiError } from "../../api"
+import { setToken } from "../../auth"
 
 export function RegisterPage() {
   const navigate = useNavigate()
@@ -21,7 +22,7 @@ export function RegisterPage() {
         nickname: String(formData.get("nickname") ?? ""),
         password: String(formData.get("password") ?? ""),
       })
-      localStorage.setItem("token", token)
+      setToken(token)
       await navigate({ to: "/" })
     } catch (error) {
       if (isApiError(error) && error.status === 400) {

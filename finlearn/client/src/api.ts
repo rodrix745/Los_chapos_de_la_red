@@ -1,8 +1,6 @@
-const BASE = import.meta.env.VITE_API_BASE_URL ?? '/api'
+import { getToken, clearToken } from "./auth"
 
-function token() {
-  return localStorage.getItem('token')
-}
+const BASE = import.meta.env.VITE_API_BASE_URL ?? '/api'
 
 // Shape thrown when a response is not ok.
 export interface ApiError {
@@ -19,7 +17,7 @@ export async function api<T>(path: string, options: { method?: string; body?: un
   if (options.body !== undefined) {
     headers['Content-Type'] = 'application/json'
   }
-  const currentToken = token()
+  const currentToken = getToken()
   if (currentToken) {
     headers.Authorization = `Bearer ${currentToken}`
   }
@@ -36,6 +34,12 @@ export async function api<T>(path: string, options: { method?: string; body?: un
     // non-JSON responses (error pages, empty bodies) keep the raw text as data
   }
   if (!response.ok) {
+    // A dead session anywhere but /login goes back to the login page; /login's
+    // own 401 (wrong credentials) must stay on the page.
+    if (response.status === 401 && window.location.pathname !== '/login') {
+      clearToken()
+      window.location.assign('/login')
+    }
     throw { status: response.status, data }
   }
   return data as T
