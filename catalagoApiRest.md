@@ -163,3 +163,134 @@ Especificación de endpoints para el **Release 1 (MVP – Aprender y planificar)
   "created_at": "2026-11-27T21:15:00Z"
 }
 ```
+# Catálogo de API REST – FinLearn (Releases 2 y 3)
+
+Especificación de endpoints para el **Release 2 (Motivar y administrar)** y el **Release 3 (Simular y explicar con IA)** del proyecto **FinLearn** (Ingeniería de Software 2 – Universidad Nacional de Colombia). Hereda las convenciones globales (`/api/v1`, JWT y estructura de errores) definidas en el catálogo del MVP.
+
+---
+
+## 1. Release 2: Motivar y Administrar (`18 HU`)
+
+### Módulo A: Recuperación de Cuenta y Perfil (`HU 1.2 – HU 1.6`)
+
+| Método | Endpoint | Descripción | Roles | Códigos HTTP | Reglas (BR) |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `POST` | `/auth/password-reset/request` | Genera token temporal de un solo uso y envía correo. **Siempre retorna `200`** con mensaje genérico sin revelar si el email existe. | Público | `200`, `400` | BR-04 |
+| `POST` | `/auth/password-reset/confirm` | Valida token temporal, actualiza la contraseña hasheada e invalida el token. | Público | `200`, `400`, `404`, `409`, `422` | BR-04, BR-05 |
+| `PATCH` | `/users/me` | Actualiza datos básicos del perfil (ej. nombre). | `LEARNER`, `ADMIN` | `200`, `400`, `401`, `422` | BR-03 |
+| `PATCH` | `/users/me/password` | Cambia la contraseña actual validando la contraseña previa. | `LEARNER`, `ADMIN` | `200`, `400`, `401`, `422` | BR-05 |
+
+### Módulo B: Gamificación – XP, Rachas e Insignias (`HU 3.7`, `HU 5.1 – HU 5.3`)
+
+| Método | Endpoint | Descripción | Roles | Códigos HTTP | Reglas (BR) |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `GET` | `/users/me/gamification` | Retorna XP total, nivel actual, progreso al siguiente nivel y racha diaria activa/máxima (`user_streaks`). | `LEARNER` | `200`, `401` | BR-13 |
+| `GET` | `/users/me/badges` | Lista las insignias desbloqueadas (`user_badges`) y las disponibles por desbloquear. | `LEARNER` | `200`, `401` | BR-12 |
+
+> **Nota de diseño:** El otorgamiento de XP, actualización de racha y asignación de insignias se ejecuta de forma interna y transaccional en el backend al completar lecciones, quizzes o simulaciones, evitando manipulación desde el cliente y previniendo duplicados (**BR-12**).
+
+### Módulo C: Administración de Usuarios y Contenidos (`HU 2.1 – HU 2.9`)
+
+> Todos los endpoints bajo `/admin` validan rol `ADMIN` en backend; cualquier petición de un `LEARNER` responde `403 Forbidden` (**BR-03**).
+
+| Método | Endpoint | Descripción | Roles | Códigos HTTP | Reglas (BR / RF) |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `GET` | `/admin/users` | Lista usuarios con filtros por rol y estado (sin exponer contraseñas). | `ADMIN` | `200`, `401`, `403` | BR-03, BR-05 |
+| `PATCH` | `/admin/users/{userId}/role` | Cambia el rol de un usuario (`LEARNER` ↔ `ADMIN`). | `ADMIN` | `200`, `400`, `401`, `403`, `404`, `422` | BR-03 |
+| `PATCH` | `/admin/users/{userId}/status` | Desactiva o reactiva lógicamente una cuenta sin borrar su historial. | `ADMIN` | `200`, `400`, `401`, `403`, `404` | BR-06 |
+| `POST` / `PUT` | `/admin/lessons` / `/{id}` | Crea o edita microlecciones y prerrequisitos opcionales sin redespliegue. | `ADMIN` | `200`, `201`, `400`, `401`, `403`, `404`, `422` | BR-09, RNF |
+| `PATCH` | `/admin/lessons/{id}/publish` | Cambia visibilidad de una lección (`DRAFT` ↔ `PUBLISHED`). | `ADMIN` | `200`, `401`, `403`, `404`, `422` | BR-15 |
+| `POST` / `PUT` | `/admin/distribution-rules` / `/{id}` | Crea o edita reglas de distribución validando suma de porcentajes igual a `100%`. | `ADMIN` | `200`, `201`, `400`, `401`, `403`, `422` | BR-16, BR-33 |
+| `DELETE` | `/admin/distribution-rules/{id}` | Elimina una regla de distribución. Retorna **`409 Conflict`** si está referenciada por presupuestos activos. | `ADMIN` | `204`, `401`, `403`, `404`, `409` | RF-17 |
+| `POST` / `PUT` | `/admin/scenarios` / `/{id}` | Crea o edita escenarios de simulación, decisiones y sus impactos JSON. | `ADMIN` | `200`, `201`, `400`, `401`, `403`, `422` | BR-25, BR-33 |
+
+---
+
+## 2. Release 3: Simulación Financiera e IA Externa (`8 HU`)
+
+### Módulo D: Simulación Financiera de 30 Días (`HU 4.1 – HU 4.6`)
+
+| Método | Endpoint | Descripción | Roles | Códigos HTTP | Reglas (BR / HU) |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `GET` | `/simulations/scenarios` | Lista los escenarios de simulación publicados disponibles para jugar. | `LEARNER`, `ADMIN` | `200`, `401` | BR-33 |
+| `POST` | `/simulations` | Inicia una nueva partida (`user_simulations`) en día 1 y estado `IN_PROGRESS`. | `LEARNER` | `201`, `400`, `401`, `404` | BR-25, BR-29 |
+| `GET` | `/simulations/{simulationId}` | Obtiene el estado actual de la simulación (día, saldo, deuda, ahorro, estado y opciones del día). | `LEARNER` | `200`, `401`, `403`, `404` | BR-29 |
+| `POST` | `/simulations/{simulationId}/decisions` | Aplica la decisión elegida (impacto JSON), registra en `simulation_logs` y avanza el día. Retorna **`409 Conflict`** si está en `DISASTER` o `COMPLETED`. | `LEARNER` | `200`, `400`, `401`, `403`, `404`, `409`, `422` | BR-25, BR-28, BR-29, HU 4.3 |
+| `GET` | `/simulations/{simulationId}/summary` | Devuelve el resumen final, puntaje obtenido y bitácora una vez finalizada (`COMPLETED` o `DISASTER`). | `LEARNER` | `200`, `401`, `403`, `404`, `409` | BR-28, BR-29 |
+
+### Módulo E: Explicación de Presupuesto con IA Externa (`HU 5.4`, `HU 5.5`)
+
+| Método | Endpoint | Descripción | Roles | Códigos HTTP | Reglas (BR) |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `POST` | `/budgets/{budgetId}/ai-explanation` | Solicita explicación al servicio de IA externo enviando solo datos numéricos agregados (cero PII). Requiere consentimiento explícito. | `LEARNER` | `200`, `201`, `400`, `401`, `403`, `404`, `422`, `503`*, `504`* | BR-37, BR-40 |
+| `GET` | `/budgets/{budgetId}/ai-explanation` | Recupera la última explicación persistida (`ai_budget_explanations`) sin volver a consultar la IA externa. | `LEARNER` | `200`, `401`, `403`, `404` | BR-40 |
+
+---
+
+## 3. Estrategia de `503` / `504` y Fallback de IA (`BR-40`)
+
+| Escenario | Comportamiento en Backend | Respuesta al Frontend | Comportamiento en UI |
+| :--- | :--- | :--- | :--- |
+| **IA responde en $\le 10\text{ s}$** | Anonimiza datos (cero PII), recibe respuesta y la guarda en `ai_budget_explanations`. | `201 Created` (`source: "AI"`) | Muestra la explicación con la etiqueta visible **"Generado por IA"**. |
+| **IA tarda $> 10\text{ s}$ o falla (`503`/`504` externo)** | Aborta la llamada a los `10 s`, captura el fallo y ejecuta `handleTimeoutFallback()`. | `200 OK` (`source: "FALLBACK"`) | Muestra explicación predeterminada local sin interrumpir al aprendiz (**BR-40**). |
+| **Fallo interno crítico** | FinLearn no puede responder ni acceder a plantillas locales. | `503` / `504` | Muestra mensaje de mantenimiento temporal con opción de reintentar. |
+
+---
+
+## 4. Ejemplos de Payloads Clave (Release 3)
+
+### Enviar Decisión en Simulación (`POST /simulations/{simulationId}/decisions`)
+
+**Request:**
+```json
+{
+  "day": 14,
+  "decision_id": 305
+}
+```
+
+**Response (`200 OK` – transición a `DISASTER`, BR-25 y BR-29):**
+```json
+{
+  "simulation_id": 72,
+  "day": 14,
+  "status": "DISASTER",
+  "impact_applied": {
+    "cash_cop": -600000,
+    "debt_cop": 450000,
+    "wellbeing_score": -15
+  },
+  "current_metrics": {
+    "cash_cop": -150000,
+    "savings_cop": 0,
+    "debt_cop": 1200000,
+    "wellbeing_score": 40
+  },
+  "final_score": 32,
+  "message": "Tu saldo cayó por debajo de cero sin ahorros disponibles. La simulación ha terminado en estado DISASTER."
+}
+```
+
+### Solicitar Explicación con IA (`POST /budgets/{budgetId}/ai-explanation`)
+
+**Request (valida consentimiento explícito – BR-37):**
+```json
+{
+  "explicit_consent": true
+}
+```
+> Si `explicit_consent` es `false` o se omite, el backend responde `422 Unprocessable Entity` (`BR-37_CONSENT_REQUIRED`).
+
+**Response con Fallback por Timeout $> 10\text{ s}$ (`200 OK` – BR-40):**
+```json
+{
+  "explanation_id": 19,
+  "budget_id": 89,
+  "source": "FALLBACK",
+  "ai_generated": false,
+  "display_label": "Explicación estándar del sistema",
+  "fallback_reason": "EXTERNAL_AI_TIMEOUT",
+  "content": "Tu presupuesto presenta un déficit de $100.000 COP en la categoría de Necesidades frente a la regla 50/30/20. Considera ajustar gastos variables o revisar tu meta de ahorro para equilibrar el mes.",
+  "generated_at": "2026-11-27T21:20:10Z"
+}
+```
