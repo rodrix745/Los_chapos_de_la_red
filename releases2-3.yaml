@@ -1,0 +1,1063 @@
+openapi: 3.0.3
+info:
+  title: FinLearn API – Releases 2 y 3
+  description: |
+    Extensión del catálogo MVP de FinLearn para Release 2 (Perfil, Gamificación y Administración) y Release 3 (Simulación Financiera de 30 días y Explicación con IA Externa).
+  version: 2.0.0
+servers:
+- url: https://virtserver.swaggerhub.com/universidadnacionald-8aa/finlearn_api/2.0.0
+  description: SwaggerHub API Auto Mocking
+- url: https://api.finlearn.edu.co/api/v1
+  description: Producción
+- url: http://localhost:8080/api/v1
+  description: Desarrollo local
+tags:
+- name: Auth & Profile (R2)
+  description: Recuperación de contraseña y gestión del perfil del usuario.
+- name: Gamification (R2)
+  description: "Experiencia (XP), niveles, rachas diarias e insignias."
+- name: Admin (R2)
+  description: "Gestión de usuarios, lecciones, reglas de distribución y escenarios (solo ADMIN)."
+- name: Simulations (R3)
+  description: "Simulación financiera de 30 días, decisiones e impactos."
+- name: AI Explanations (R3)
+  description: "Explicaciones de presupuesto con IA externa y estrategia de fallback (BR-37, BR-40)."
+paths:
+  /auth/password-reset/request:
+    post:
+      tags:
+      - Auth & Profile (R2)
+      summary: Solicitar recuperación de contraseña (BR-04)
+      description: |
+        Genera un token temporal de un solo uso y envía un correo. Siempre responde 200 con un mensaje genérico sin revelar si el correo existe.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/passwordreset_request_body"
+        required: true
+      responses:
+        "200":
+          description: Solicitud procesada de forma genérica.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/inline_response_200"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+      security: []
+  /auth/password-reset/confirm:
+    post:
+      tags:
+      - Auth & Profile (R2)
+      summary: "Confirmar cambio de contraseña con token (BR-04, BR-05)"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/passwordreset_confirm_body"
+        required: true
+      responses:
+        "200":
+          description: Contraseña actualizada correctamente.
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          description: Token ya utilizado o expirado.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "422":
+          $ref: "#/components/responses/ErrorResponse"
+      security: []
+  /users/me:
+    patch:
+      tags:
+      - Auth & Profile (R2)
+      summary: Actualizar perfil propio (BR-03)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/users_me_body"
+        required: true
+      responses:
+        "200":
+          description: Perfil actualizado.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserSummary"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "422":
+          $ref: "#/components/responses/ErrorResponse"
+      security:
+      - bearerAuth: []
+  /users/me/password:
+    patch:
+      tags:
+      - Auth & Profile (R2)
+      summary: Cambiar contraseña actual (BR-05)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/me_password_body"
+        required: true
+      responses:
+        "200":
+          description: Contraseña actualizada.
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "422":
+          $ref: "#/components/responses/ErrorResponse"
+      security:
+      - bearerAuth: []
+  /users/me/gamification:
+    get:
+      tags:
+      - Gamification (R2)
+      summary: "Obtener XP, nivel y racha del aprendiz (BR-13)"
+      responses:
+        "200":
+          description: Estado de gamificación del usuario autenticado.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GamificationStatus"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+      security:
+      - bearerAuth: []
+  /users/me/badges:
+    get:
+      tags:
+      - Gamification (R2)
+      summary: Listar insignias desbloqueadas y disponibles (BR-12)
+      responses:
+        "200":
+          description: Listado de insignias.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/BadgeItem"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+      security:
+      - bearerAuth: []
+  /admin/users:
+    get:
+      tags:
+      - Admin (R2)
+      summary: "Listar usuarios con filtros (BR-03, BR-05)"
+      parameters:
+      - name: role
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - LEARNER
+          - ADMIN
+      - name: active
+        in: query
+        required: false
+        schema:
+          type: boolean
+      responses:
+        "200":
+          description: Lista de usuarios sin exponer contraseñas.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserSummary"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+      security:
+      - bearerAuth: []
+  /admin/users/{userId}/role:
+    patch:
+      tags:
+      - Admin (R2)
+      summary: Cambiar rol de un usuario (BR-03)
+      parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/userId_role_body"
+        required: true
+      responses:
+        "200":
+          description: Rol actualizado.
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+        "422":
+          $ref: "#/components/responses/ErrorResponse"
+      security:
+      - bearerAuth: []
+  /admin/users/{userId}/status:
+    patch:
+      tags:
+      - Admin (R2)
+      summary: Desactivar o reactivar lógicamente una cuenta (BR-06)
+      parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/userId_status_body"
+        required: true
+      responses:
+        "200":
+          description: Estado actualizado sin eliminar historial.
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+      security:
+      - bearerAuth: []
+  /admin/lessons:
+    post:
+      tags:
+      - Admin (R2)
+      summary: Crear microlección (BR-09)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminLessonRequest"
+        required: true
+      responses:
+        "201":
+          description: Lección creada.
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "422":
+          $ref: "#/components/responses/ErrorResponse"
+      security:
+      - bearerAuth: []
+  /admin/lessons/{id}:
+    put:
+      tags:
+      - Admin (R2)
+      summary: Editar microlección existente (BR-09)
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminLessonRequest"
+        required: true
+      responses:
+        "200":
+          description: Lección actualizada.
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+        "422":
+          $ref: "#/components/responses/ErrorResponse"
+      security:
+      - bearerAuth: []
+  /admin/lessons/{id}/publish:
+    patch:
+      tags:
+      - Admin (R2)
+      summary: Publicar o pasar a borrador una lección (BR-15)
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/id_publish_body"
+        required: true
+      responses:
+        "200":
+          description: Visibilidad actualizada.
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+        "422":
+          $ref: "#/components/responses/ErrorResponse"
+      security:
+      - bearerAuth: []
+  /admin/distribution-rules:
+    post:
+      tags:
+      - Admin (R2)
+      summary: "Crear regla de distribución (BR-16, BR-33)"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DistributionRuleRequest"
+        required: true
+      responses:
+        "201":
+          description: Regla creada.
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "422":
+          description: La suma de porcentajes no es igual a 100%.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+      security:
+      - bearerAuth: []
+  /admin/distribution-rules/{id}:
+    put:
+      tags:
+      - Admin (R2)
+      summary: "Editar regla de distribución (BR-16, BR-33)"
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DistributionRuleRequest"
+        required: true
+      responses:
+        "200":
+          description: Regla actualizada.
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+        "422":
+          $ref: "#/components/responses/ErrorResponse"
+      security:
+      - bearerAuth: []
+    delete:
+      tags:
+      - Admin (R2)
+      summary: Eliminar regla de distribución (RF-17)
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        "204":
+          description: Regla eliminada.
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          description: La regla está referenciada por presupuestos activos.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+      security:
+      - bearerAuth: []
+  /admin/scenarios:
+    post:
+      tags:
+      - Admin (R2)
+      summary: "Crear escenario de simulación (BR-25, BR-33)"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminScenarioRequest"
+        required: true
+      responses:
+        "201":
+          description: Escenario creado.
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "422":
+          $ref: "#/components/responses/ErrorResponse"
+      security:
+      - bearerAuth: []
+  /admin/scenarios/{id}:
+    put:
+      tags:
+      - Admin (R2)
+      summary: "Editar escenario de simulación (BR-25, BR-33)"
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminScenarioRequest"
+        required: true
+      responses:
+        "200":
+          description: Escenario actualizado.
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+        "422":
+          $ref: "#/components/responses/ErrorResponse"
+      security:
+      - bearerAuth: []
+  /simulations/scenarios:
+    get:
+      tags:
+      - Simulations (R3)
+      summary: Listar escenarios publicados (BR-33)
+      responses:
+        "200":
+          description: Escenarios disponibles para iniciar simulación.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ScenarioSummary"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+      security:
+      - bearerAuth: []
+  /simulations:
+    post:
+      tags:
+      - Simulations (R3)
+      summary: "Iniciar nueva simulación de 30 días (BR-25, BR-29)"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/simulations_body"
+        required: true
+      responses:
+        "201":
+          description: Simulación iniciada en día 1 y estado IN_PROGRESS.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SimulationState"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+      security:
+      - bearerAuth: []
+  /simulations/{simulationId}:
+    get:
+      tags:
+      - Simulations (R3)
+      summary: Consultar estado actual de una simulación (BR-29)
+      parameters:
+      - name: simulationId
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: "Estado actual, métricas y opciones del día."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SimulationState"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+      security:
+      - bearerAuth: []
+  /simulations/{simulationId}/decisions:
+    post:
+      tags:
+      - Simulations (R3)
+      summary: "Registrar decisión del día y avanzar simulación (BR-25, BR-28, BR-29)"
+      parameters:
+      - name: simulationId
+        in: path
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/simulationId_decisions_body"
+        required: true
+      responses:
+        "200":
+          description: Decisión aplicada y métricas actualizadas.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DecisionResult"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          description: La simulación ya finalizó (COMPLETED o DISASTER).
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "422":
+          $ref: "#/components/responses/ErrorResponse"
+      security:
+      - bearerAuth: []
+  /simulations/{simulationId}/summary:
+    get:
+      tags:
+      - Simulations (R3)
+      summary: "Obtener resumen final y bitácora de simulación (BR-28, BR-29)"
+      parameters:
+      - name: simulationId
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: "Resumen final, puntaje y bitácora."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SimulationSummary"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+        "409":
+          description: La simulación aún está IN_PROGRESS.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+      security:
+      - bearerAuth: []
+  /budgets/{budgetId}/ai-explanation:
+    get:
+      tags:
+      - AI Explanations (R3)
+      summary: Obtener última explicación persistida del presupuesto (BR-40)
+      parameters:
+      - name: budgetId
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Última explicación almacenada.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiExplanationResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+      security:
+      - bearerAuth: []
+    post:
+      tags:
+      - AI Explanations (R3)
+      summary: "Solicitar explicación con IA externa y fallback automático (BR-37, BR-40)"
+      description: |
+        Envía únicamente datos numéricos agregados (cero PII) al servicio externo de IA. Si la IA responde en <= 10s retorna 201 (source: AI). Si excede 10s o falla, ejecuta fallback local y retorna 200 (source: FALLBACK).
+      parameters:
+      - name: budgetId
+        in: path
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/budgetId_aiexplanation_body"
+        required: true
+      responses:
+        "201":
+          description: Explicación generada exitosamente por IA externa.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiExplanationResponse"
+        "200":
+          description: Fallback local aplicado por timeout (> 10s) o indisponibilidad de IA externa.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiExplanationResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+        "422":
+          description: Falta consentimiento explícito (BR-37_CONSENT_REQUIRED).
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "503":
+          $ref: "#/components/responses/ErrorResponse"
+        "504":
+          $ref: "#/components/responses/ErrorResponse"
+      security:
+      - bearerAuth: []
+components:
+  schemas:
+    ApiError:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        status:
+          type: integer
+        code:
+          type: string
+          example: BR-37_CONSENT_REQUIRED
+        message:
+          type: string
+    UserSummary:
+      type: object
+      properties:
+        id:
+          type: integer
+        full_name:
+          type: string
+        email:
+          type: string
+          format: email
+        role:
+          type: string
+          enum:
+          - LEARNER
+          - ADMIN
+        active:
+          type: boolean
+    GamificationStatus:
+      type: object
+      properties:
+        total_xp:
+          type: integer
+          example: 450
+        current_level:
+          type: integer
+          example: 3
+        xp_to_next_level:
+          type: integer
+          example: 150
+        current_streak_days:
+          type: integer
+          example: 5
+        longest_streak_days:
+          type: integer
+          example: 12
+    BadgeItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        code:
+          type: string
+          example: FIRST_BUDGET
+        name:
+          type: string
+          example: Primer Presupuesto
+        unlocked:
+          type: boolean
+        unlocked_at:
+          type: string
+          format: date-time
+          nullable: true
+    AdminLessonRequest:
+      required:
+      - content_markdown
+      - title
+      type: object
+      properties:
+        title:
+          type: string
+        content_markdown:
+          type: string
+        prerequisite_lesson_id:
+          type: integer
+          nullable: true
+    DistributionRuleRequest:
+      required:
+      - name
+      - needs_pct
+      - savings_pct
+      - wants_pct
+      type: object
+      properties:
+        name:
+          type: string
+          example: Regla 50/30/20
+        needs_pct:
+          type: number
+          example: 50
+        wants_pct:
+          type: number
+          example: 30
+        savings_pct:
+          type: number
+          example: 20
+    AdminScenarioRequest:
+      required:
+      - decisions
+      - initial_cash_cop
+      - title
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        initial_cash_cop:
+          type: number
+        decisions:
+          type: array
+          items:
+            $ref: "#/components/schemas/AdminScenarioRequest_decisions"
+    ScenarioSummary:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        initial_cash_cop:
+          type: number
+    SimulationMetrics:
+      type: object
+      properties:
+        cash_cop:
+          type: number
+        savings_cop:
+          type: number
+        debt_cop:
+          type: number
+        wellbeing_score:
+          type: integer
+    SimulationState:
+      type: object
+      properties:
+        simulation_id:
+          type: integer
+        scenario_id:
+          type: integer
+        day:
+          type: integer
+        status:
+          type: string
+          enum:
+          - IN_PROGRESS
+          - COMPLETED
+          - DISASTER
+        current_metrics:
+          $ref: "#/components/schemas/SimulationMetrics"
+    DecisionResult:
+      type: object
+      properties:
+        simulation_id:
+          type: integer
+        day:
+          type: integer
+        status:
+          type: string
+          enum:
+          - IN_PROGRESS
+          - COMPLETED
+          - DISASTER
+        impact_applied:
+          type: object
+          additionalProperties:
+            type: number
+        current_metrics:
+          $ref: "#/components/schemas/SimulationMetrics"
+        final_score:
+          type: integer
+          nullable: true
+        message:
+          type: string
+    SimulationSummary:
+      type: object
+      properties:
+        simulation_id:
+          type: integer
+        status:
+          type: string
+          enum:
+          - COMPLETED
+          - DISASTER
+        final_score:
+          type: integer
+        final_metrics:
+          $ref: "#/components/schemas/SimulationMetrics"
+        logs:
+          type: array
+          items:
+            $ref: "#/components/schemas/SimulationSummary_logs"
+    AiExplanationResponse:
+      type: object
+      properties:
+        explanation_id:
+          type: integer
+        budget_id:
+          type: integer
+        source:
+          type: string
+          enum:
+          - AI
+          - FALLBACK
+        ai_generated:
+          type: boolean
+        display_label:
+          type: string
+          example: Generado por IA
+        fallback_reason:
+          type: string
+          nullable: true
+          example: EXTERNAL_AI_TIMEOUT
+        content:
+          type: string
+        generated_at:
+          type: string
+          format: date-time
+    passwordreset_request_body:
+      required:
+      - email
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          example: aprendiz@unal.edu.co
+    inline_response_200:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Si el correo está registrado, recibirás instrucciones en breve."
+    passwordreset_confirm_body:
+      required:
+      - new_password
+      - token
+      type: object
+      properties:
+        token:
+          type: string
+          example: eyJhbGciOi...
+        new_password:
+          minLength: 8
+          type: string
+          format: password
+    users_me_body:
+      type: object
+      properties:
+        full_name:
+          type: string
+          example: Laura Gómez
+    me_password_body:
+      required:
+      - current_password
+      - new_password
+      type: object
+      properties:
+        current_password:
+          type: string
+          format: password
+        new_password:
+          minLength: 8
+          type: string
+          format: password
+    userId_role_body:
+      required:
+      - role
+      type: object
+      properties:
+        role:
+          type: string
+          enum:
+          - LEARNER
+          - ADMIN
+    userId_status_body:
+      required:
+      - active
+      type: object
+      properties:
+        active:
+          type: boolean
+    id_publish_body:
+      required:
+      - status
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - DRAFT
+          - PUBLISHED
+    simulations_body:
+      required:
+      - scenario_id
+      type: object
+      properties:
+        scenario_id:
+          type: integer
+          example: 3
+    simulationId_decisions_body:
+      required:
+      - day
+      - decision_id
+      type: object
+      properties:
+        day:
+          maximum: 30
+          minimum: 1
+          type: integer
+          example: 14
+        decision_id:
+          type: integer
+          example: 305
+    budgetId_aiexplanation_body:
+      required:
+      - explicit_consent
+      type: object
+      properties:
+        explicit_consent:
+          type: boolean
+          example: true
+    AdminScenarioRequest_decisions:
+      type: object
+      properties:
+        day:
+          type: integer
+        prompt:
+          type: string
+        impact_json:
+          type: object
+          additionalProperties: true
+    SimulationSummary_logs:
+      type: object
+      properties:
+        day:
+          type: integer
+        decision_id:
+          type: integer
+        impact_json:
+          type: object
+          additionalProperties: true
+  responses:
+    ErrorResponse:
+      description: Error estándar de la API.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiError"
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
