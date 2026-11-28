@@ -163,7 +163,7 @@ Especificación de endpoints para el **Release 1 (MVP – Aprender y planificar)
   "created_at": "2026-11-27T21:15:00Z"
 }
 ```
-# Catálogo de API REST – FinLearn (Releases 2 y 3)
+# Releases 2 y 3
 
 Especificación de endpoints para el **Release 2 (Motivar y administrar)** y el **Release 3 (Simular y explicar con IA)** del proyecto **FinLearn** (Ingeniería de Software 2 – Universidad Nacional de Colombia). Hereda las convenciones globales (`/api/v1`, JWT y estructura de errores) definidas en el catálogo del MVP.
 
