@@ -283,6 +283,43 @@ note for UserSimulation "BR-29: IN_PROGRESS, COMPLETED, DISASTER"
 <img width="2792" height="2817" alt="FINLEARN" src="https://github.com/user-attachments/assets/b735eb30-db83-4010-a674-19f6c847b021" />
 
 
+##  🧮 architecture diagram
+For this project we plan on using a classic client-server 3 tiered architecture along with an additional outside system. We are suggesting that for our back-end we will be using a monolithic style application. Specifically a modular monolith is the best and most efficient structure to follow for this proposed MVP 50 users
+1. Definition of each tier and suggested technologies
+Tier one - presentation layer / client-side / front end:
+Component: single page web application
+Suggested technologies: react.js, angular or Vue.js (and HTML5/css3)
+Role/responsibilities: creating the visual representation of learning paths, budget graphs, and simulation Scenarios. In addition it is responsible for creating a smooth user experience by allowing for user interaction in real time with the server.
+Tier two - application layer / server-side / back end:
+Component: restful API built as a modular monolith
+Suggested technologies: Spring Boot (Java), Node.js (Express/NestJS), or Django/fastapi (python)
+Role/responsibilities: allowing for centralized management of security and business logic. When designing the class diagram and database, we have identified four logical sub-modules residing in the monolith that represent different areas of functionality:
+Auth & gamification submodule: identity management, role management, streak management, badge management
+Education submodule: lesson plans, quiz questions, and other education related items
+Simulation submodule: simulation scenario creation, decision-making, and status indicator updates
+Budgeting & ai submodule: budget allocation rule generation and communication to an outside ai service.
+Tier three - data storage layer / database
+Component: relational database engine
+Suggested technologies: postgresql or mysql
+
+Role/responsibilities: providing persistent storage of all user information including user profiles, learning history, simulations run, and budgets created. Maintaining referential integrity (foreign key constraints) based off the central user entity.
+Outside systems:
+Component: artificial intelligence service
+Suggested technologies: openai API (chatgpt) or another generative ai through http
+Role/responsibilities: receive anonymous financial information and provide feedback in plain text.
+2. Communication Flows
+
+Frontend <-> Backend: Asynchronous communication via HTTP/HTTPS requests, using the REST standard and exchanging data in JSON format.
+
+Backend <-> Database: Direct connection via SQL (likely through an ORM).
+
+Backend <-> External AI: Secure HTTPS (REST) ​​requests using an API key managed exclusively by the monolithic server (never from the frontend, for security reasons).
+
+Based on the above, this is the proposed architectural design.:
+
+<img width="4830" height="7227" alt="arquitectura finlearn-2026-11-28-013043" src="https://github.com/user-attachments/assets/d352466b-16a9-4b56-ba24-dfe77fcb7408" />
+
+
 ## 🛠️ Tecnologías y Arquitectura
 * **Frontend:** React (Vite) junto con Tailwind CSS. Se garantiza la accesibilidad permitiendo que el registro, estudio y elaboración de presupuestos puedan completarse utilizando únicamente el teclado.
 * **Backend:** Node.js con el framework Express para el desarrollo de la API REST encargada de la lógica de la plataforma.
