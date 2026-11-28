@@ -1,0 +1,1604 @@
+<!doctype html>
+<html>
+  <head>
+    <title>FinLearn API – Release 1 (MVP)</title>
+    <style type="text/css">
+      body {
+      	font-family: Trebuchet MS, sans-serif;
+      	font-size: 15px;
+      	color: #444;
+      	margin-right: 24px;
+      }
+      
+      h1	{
+      	font-size: 25px;
+      }
+      h2	{
+      	font-size: 20px;
+      }
+      h3	{
+      	font-size: 16px;
+      	font-weight: bold;
+      }
+      hr	{
+      	height: 1px;
+      	border: 0;
+      	color: #ddd;
+      	background-color: #ddd;
+      }
+      
+      .app-desc {
+        clear: both;
+        margin-left: 20px;
+      }
+      .param-name {
+        width: 100%;
+      }
+      .license-info {
+        margin-left: 20px;
+      }
+      
+      .license-url {
+        margin-left: 20px;
+      }
+      
+      .model {
+        margin: 0 0 0px 20px;
+      }
+      
+      .method {
+        margin-left: 20px;
+      }
+      
+      .method-notes	{
+      	margin: 10px 0 20px 0;
+      	font-size: 90%;
+      	color: #555;
+      }
+      
+      pre {
+        padding: 10px;
+        margin-bottom: 2px;
+      }
+      
+      .http-method {
+       text-transform: uppercase;
+      }
+      
+      pre.get {
+        background-color: #0f6ab4;
+      }
+      
+      pre.post {
+        background-color: #10a54a;
+      }
+      
+      pre.put {
+        background-color: #c5862b;
+      }
+      
+      pre.delete {
+        background-color: #a41e22;
+      }
+      
+      .huge	{
+      	color: #fff;
+      }
+      
+      pre.example {
+        background-color: #f3f3f3;
+        padding: 10px;
+        border: 1px solid #ddd;
+      }
+      
+      code {
+        white-space: pre;
+      }
+      
+      .nickname {
+        font-weight: bold;
+      }
+      
+      .method-path {
+        font-size: 1.5em;
+        background-color: #0f6ab4;
+      }
+      
+      .up {
+        float:right;
+      }
+      
+      .parameter {
+        width: 500px;
+      }
+      
+      .param {
+        width: 500px;
+        padding: 10px 0 0 20px;
+        font-weight: bold;
+      }
+      
+      .param-desc {
+        width: 700px;
+        padding: 0 0 0 20px;
+        color: #777;
+      }
+      
+      .param-type {
+        font-style: italic;
+      }
+      
+      .param-enum-header {
+      width: 700px;
+      padding: 0 0 0 60px;
+      color: #777;
+      font-weight: bold;
+      }
+      
+      .param-enum {
+      width: 700px;
+      padding: 0 0 0 80px;
+      color: #777;
+      font-style: italic;
+      }
+      
+      .field-label {
+        padding: 0;
+        margin: 0;
+        clear: both;
+      }
+      
+      .field-items	{
+      	padding: 0 0 15px 0;
+      	margin-bottom: 15px;
+      }
+      
+      .return-type {
+        clear: both;
+        padding-bottom: 10px;
+      }
+      
+      .param-header {
+        font-weight: bold;
+      }
+      
+      .method-tags {
+        text-align: right;
+      }
+      
+      .method-tag {
+        background: none repeat scroll 0% 0% #24A600;
+        border-radius: 3px;
+        padding: 2px 10px;
+        margin: 2px;
+        color: #FFF;
+        display: inline-block;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+  <h1>FinLearn API – Release 1 (MVP)</h1>
+    <div class="app-desc">API REST para el MVP de FinLearn (Ingeniería de Software 2 – UNAL). Cubre las 12 Historias de Usuario del Release 1: Autenticación, Educación/Quizzes y Planificación de Presupuestos en COP (sin conexión a dinero real ni bancos).</div>
+    <div class="app-desc">More information: <a href="https://helloreverb.com">https://helloreverb.com</a></div>
+    <div class="app-desc">Contact Info: <a href="hello@helloreverb.com">hello@helloreverb.com</a></div>
+    <div class="app-desc">Version: 1.0.0</div>
+    <div class="app-desc">BasePath:/api/v1</div>
+    <div class="license-info">All rights reserved</div>
+    <div class="license-url">http://apache.org/licenses/LICENSE-2.0.html</div>
+  <h2>Access</h2>
+    <ol>
+      <li></li>
+    </ol>
+
+  <h2><a name="__Methods">Methods</a></h2>
+  [ Jump to <a href="#__Models">Models</a> ]
+
+  <h3>Table of Contents </h3>
+  <div class="method-summary"></div>
+  <h4><a href="#Auth">Auth</a></h4>
+  <ul>
+  <li><a href="#authLoginPost"><code><span class="http-method">post</span> /auth/login</code></a></li>
+  <li><a href="#authRegisterPost"><code><span class="http-method">post</span> /auth/register</code></a></li>
+  <li><a href="#usersMeGet"><code><span class="http-method">get</span> /users/me</code></a></li>
+  </ul>
+  <h4><a href="#Budgets">Budgets</a></h4>
+  <ul>
+  <li><a href="#budgetsBudgetIdGet"><code><span class="http-method">get</span> /budgets/{budgetId}</code></a></li>
+  <li><a href="#budgetsGet"><code><span class="http-method">get</span> /budgets</code></a></li>
+  <li><a href="#budgetsPost"><code><span class="http-method">post</span> /budgets</code></a></li>
+  <li><a href="#distributionRulesGet"><code><span class="http-method">get</span> /distribution-rules</code></a></li>
+  <li><a href="#expenseCategoriesGet"><code><span class="http-method">get</span> /expense-categories</code></a></li>
+  </ul>
+  <h4><a href="#Learning">Learning</a></h4>
+  <ul>
+  <li><a href="#learningPathsGet"><code><span class="http-method">get</span> /learning-paths</code></a></li>
+  <li><a href="#lessonsLessonIdCompletePost"><code><span class="http-method">post</span> /lessons/{lessonId}/complete</code></a></li>
+  <li><a href="#lessonsLessonIdGet"><code><span class="http-method">get</span> /lessons/{lessonId}</code></a></li>
+  <li><a href="#lessonsLessonIdQuizGet"><code><span class="http-method">get</span> /lessons/{lessonId}/quiz</code></a></li>
+  <li><a href="#modulesModuleIdLessonsGet"><code><span class="http-method">get</span> /modules/{moduleId}/lessons</code></a></li>
+  <li><a href="#quizzesQuizIdAttemptsPost"><code><span class="http-method">post</span> /quizzes/{quizId}/attempts</code></a></li>
+  <li><a href="#usersMeProgressGet"><code><span class="http-method">get</span> /users/me/progress</code></a></li>
+  </ul>
+
+  <h1><a name="Auth">Auth</a></h1>
+  <div class="method"><a name="authLoginPost"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /auth/login</code></pre></div>
+    <div class="method-summary">Iniciar sesión (<span class="nickname">authLoginPost</span>)</div>
+    <div class="method-notes">Valida credenciales y retorna JWT. Rechaza cuentas desactivadas lógicamente con 403 (BR-05, BR-06).</div>
+
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">body <a href="#LoginRequest">LoginRequest</a> (required)</div>
+      
+            <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash;  </div>
+                </div>  <!-- field-items -->
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#AuthResponse">AuthResponse</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "access_token" : "access_token",
+  "token_type" : "Bearer",
+  "user" : {
+    "full_name" : "full_name",
+    "role" : "LEARNER",
+    "is_active" : true,
+    "id" : 0,
+    "email" : ""
+  }
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Autenticación exitosa
+        <a href="#AuthResponse">AuthResponse</a>
+    <h4 class="field-label">400</h4>
+    Petición malformada o tipos de datos inválidos
+        <a href="#ErrorResponse">ErrorResponse</a>
+    <h4 class="field-label">401</h4>
+    Token ausente, expirado o credenciales inválidas
+        <a href="#ErrorResponse">ErrorResponse</a>
+    <h4 class="field-label">403</h4>
+    Sin permisos suficientes o cuenta desactivada (BR-03, BR-06)
+        <a href="#ErrorResponse">ErrorResponse</a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="authRegisterPost"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /auth/register</code></pre></div>
+    <div class="method-summary">Registrar nuevo aprendiz (<span class="nickname">authRegisterPost</span>)</div>
+    <div class="method-notes">Crea una cuenta con rol <code>LEARNER</code> por defecto y contraseña hasheada (BR-01, BR-03, BR-05).</div>
+
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">body <a href="#RegisterRequest">RegisterRequest</a> (required)</div>
+      
+            <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash;  </div>
+                </div>  <!-- field-items -->
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#UserProfile">UserProfile</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "full_name" : "full_name",
+  "role" : "LEARNER",
+  "is_active" : true,
+  "id" : 0,
+  "email" : ""
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">201</h4>
+    Usuario creado exitosamente
+        <a href="#UserProfile">UserProfile</a>
+    <h4 class="field-label">400</h4>
+    Petición malformada o tipos de datos inválidos
+        <a href="#ErrorResponse">ErrorResponse</a>
+    <h4 class="field-label">409</h4>
+    Conflicto con el estado actual (email duplicado BR-01 o prerrequisito pendiente BR-09)
+        <a href="#ErrorResponse">ErrorResponse</a>
+    <h4 class="field-label">422</h4>
+    Violación de regla de negocio (ej. montos negativos BR-14)
+        <a href="#ErrorResponse">ErrorResponse</a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="usersMeGet"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /users/me</code></pre></div>
+    <div class="method-summary">Obtener perfil del usuario autenticado (<span class="nickname">usersMeGet</span>)</div>
+    <div class="method-notes"></div>
+
+
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#UserProfile">UserProfile</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "full_name" : "full_name",
+  "role" : "LEARNER",
+  "is_active" : true,
+  "id" : 0,
+  "email" : ""
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Perfil del usuario (sin hash de contraseña)
+        <a href="#UserProfile">UserProfile</a>
+    <h4 class="field-label">401</h4>
+    Token ausente, expirado o credenciales inválidas
+        <a href="#ErrorResponse">ErrorResponse</a>
+  </div> <!-- method -->
+  <hr/>
+  <h1><a name="Budgets">Budgets</a></h1>
+  <div class="method"><a name="budgetsBudgetIdGet"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /budgets/{budgetId}</code></pre></div>
+    <div class="method-summary">Obtener detalle de un plan de presupuesto propio (BR-22) (<span class="nickname">budgetsBudgetIdGet</span>)</div>
+    <div class="method-notes"></div>
+
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">budgetId (required)</div>
+      
+            <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash;  </div>    </div>  <!-- field-items -->
+
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#BudgetPlanResponse">BudgetPlanResponse</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "savings_goal_cop" : 1.4658129805029452,
+  "total_fixed_expenses_cop" : 5.962133916683182,
+  "month" : "month",
+  "has_deficit" : true,
+  "budget_id" : 0,
+  "breakdown" : [ {
+    "bucket" : "NEEDS",
+    "allocated_cop" : 3.616076749251911,
+    "percentage" : 9,
+    "remaining_cop" : 2.027123023002322
+  }, {
+    "bucket" : "NEEDS",
+    "allocated_cop" : 3.616076749251911,
+    "percentage" : 9,
+    "remaining_cop" : 2.027123023002322
+  } ],
+  "created_at" : "2000-01-23T04:56:07.000+00:00",
+  "deficit_alerts" : [ {
+    "bucket" : "NEEDS",
+    "allocated_cop" : 5.637376656633329,
+    "spent_cop" : 2.3021358869347655,
+    "difference_cop" : 7.061401241503109,
+    "message" : "message"
+  }, {
+    "bucket" : "NEEDS",
+    "allocated_cop" : 5.637376656633329,
+    "spent_cop" : 2.3021358869347655,
+    "difference_cop" : 7.061401241503109,
+    "message" : "message"
+  } ],
+  "rule_applied" : {
+    "savings_pct" : 20,
+    "needs_pct" : 50,
+    "wants_pct" : 30,
+    "name" : "50/30/20",
+    "id" : 0
+  },
+  "monthly_income_cop" : 6.027456183070403
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Detalle del presupuesto
+        <a href="#BudgetPlanResponse">BudgetPlanResponse</a>
+    <h4 class="field-label">401</h4>
+    Token ausente, expirado o credenciales inválidas
+        <a href="#ErrorResponse">ErrorResponse</a>
+    <h4 class="field-label">403</h4>
+    Sin permisos suficientes o cuenta desactivada (BR-03, BR-06)
+        <a href="#ErrorResponse">ErrorResponse</a>
+    <h4 class="field-label">404</h4>
+    Recurso inexistente o no publicado (BR-15, BR-33)
+        <a href="#ErrorResponse">ErrorResponse</a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="budgetsGet"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /budgets</code></pre></div>
+    <div class="method-summary">Listar historial de presupuestos del usuario (BR-22) (<span class="nickname">budgetsGet</span>)</div>
+    <div class="method-notes"></div>
+
+
+
+
+
+    <h3 class="field-label">Query parameters</h3>
+    <div class="field-items">
+      <div class="param">page (optional)</div>
+      
+            <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash;  default: 1 </div>      <div class="param">limit (optional)</div>
+      
+            <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash;  default: 10 </div>    </div>  <!-- field-items -->
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      array[<a href="#BudgetPlanResponse">BudgetPlanResponse</a>]
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>[ {
+  "savings_goal_cop" : 1.4658129805029452,
+  "total_fixed_expenses_cop" : 5.962133916683182,
+  "month" : "month",
+  "has_deficit" : true,
+  "budget_id" : 0,
+  "breakdown" : [ {
+    "bucket" : "NEEDS",
+    "allocated_cop" : 3.616076749251911,
+    "percentage" : 9,
+    "remaining_cop" : 2.027123023002322
+  }, {
+    "bucket" : "NEEDS",
+    "allocated_cop" : 3.616076749251911,
+    "percentage" : 9,
+    "remaining_cop" : 2.027123023002322
+  } ],
+  "created_at" : "2000-01-23T04:56:07.000+00:00",
+  "deficit_alerts" : [ {
+    "bucket" : "NEEDS",
+    "allocated_cop" : 5.637376656633329,
+    "spent_cop" : 2.3021358869347655,
+    "difference_cop" : 7.061401241503109,
+    "message" : "message"
+  }, {
+    "bucket" : "NEEDS",
+    "allocated_cop" : 5.637376656633329,
+    "spent_cop" : 2.3021358869347655,
+    "difference_cop" : 7.061401241503109,
+    "message" : "message"
+  } ],
+  "rule_applied" : {
+    "savings_pct" : 20,
+    "needs_pct" : 50,
+    "wants_pct" : 30,
+    "name" : "50/30/20",
+    "id" : 0
+  },
+  "monthly_income_cop" : 6.027456183070403
+}, {
+  "savings_goal_cop" : 1.4658129805029452,
+  "total_fixed_expenses_cop" : 5.962133916683182,
+  "month" : "month",
+  "has_deficit" : true,
+  "budget_id" : 0,
+  "breakdown" : [ {
+    "bucket" : "NEEDS",
+    "allocated_cop" : 3.616076749251911,
+    "percentage" : 9,
+    "remaining_cop" : 2.027123023002322
+  }, {
+    "bucket" : "NEEDS",
+    "allocated_cop" : 3.616076749251911,
+    "percentage" : 9,
+    "remaining_cop" : 2.027123023002322
+  } ],
+  "created_at" : "2000-01-23T04:56:07.000+00:00",
+  "deficit_alerts" : [ {
+    "bucket" : "NEEDS",
+    "allocated_cop" : 5.637376656633329,
+    "spent_cop" : 2.3021358869347655,
+    "difference_cop" : 7.061401241503109,
+    "message" : "message"
+  }, {
+    "bucket" : "NEEDS",
+    "allocated_cop" : 5.637376656633329,
+    "spent_cop" : 2.3021358869347655,
+    "difference_cop" : 7.061401241503109,
+    "message" : "message"
+  } ],
+  "rule_applied" : {
+    "savings_pct" : 20,
+    "needs_pct" : 50,
+    "wants_pct" : 30,
+    "name" : "50/30/20",
+    "id" : 0
+  },
+  "monthly_income_cop" : 6.027456183070403
+} ]</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Historial paginado de planes de presupuesto
+        
+    <h4 class="field-label">401</h4>
+    Token ausente, expirado o credenciales inválidas
+        <a href="#ErrorResponse">ErrorResponse</a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="budgetsPost"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /budgets</code></pre></div>
+    <div class="method-summary">Crear plan de presupuesto mensual en COP (BR-14, BR-16, BR-18, BR-19, BR-23) (<span class="nickname">budgetsPost</span>)</div>
+    <div class="method-notes"></div>
+
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">body <a href="#CreateBudgetRequest">CreateBudgetRequest</a> (required)</div>
+      
+            <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash;  </div>
+                </div>  <!-- field-items -->
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#BudgetPlanResponse">BudgetPlanResponse</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "savings_goal_cop" : 1.4658129805029452,
+  "total_fixed_expenses_cop" : 5.962133916683182,
+  "month" : "month",
+  "has_deficit" : true,
+  "budget_id" : 0,
+  "breakdown" : [ {
+    "bucket" : "NEEDS",
+    "allocated_cop" : 3.616076749251911,
+    "percentage" : 9,
+    "remaining_cop" : 2.027123023002322
+  }, {
+    "bucket" : "NEEDS",
+    "allocated_cop" : 3.616076749251911,
+    "percentage" : 9,
+    "remaining_cop" : 2.027123023002322
+  } ],
+  "created_at" : "2000-01-23T04:56:07.000+00:00",
+  "deficit_alerts" : [ {
+    "bucket" : "NEEDS",
+    "allocated_cop" : 5.637376656633329,
+    "spent_cop" : 2.3021358869347655,
+    "difference_cop" : 7.061401241503109,
+    "message" : "message"
+  }, {
+    "bucket" : "NEEDS",
+    "allocated_cop" : 5.637376656633329,
+    "spent_cop" : 2.3021358869347655,
+    "difference_cop" : 7.061401241503109,
+    "message" : "message"
+  } ],
+  "rule_applied" : {
+    "savings_pct" : 20,
+    "needs_pct" : 50,
+    "wants_pct" : 30,
+    "name" : "50/30/20",
+    "id" : 0
+  },
+  "monthly_income_cop" : 6.027456183070403
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">201</h4>
+    Presupuesto calculado y guardado con evaluación de déficit
+        <a href="#BudgetPlanResponse">BudgetPlanResponse</a>
+    <h4 class="field-label">400</h4>
+    Petición malformada o tipos de datos inválidos
+        <a href="#ErrorResponse">ErrorResponse</a>
+    <h4 class="field-label">401</h4>
+    Token ausente, expirado o credenciales inválidas
+        <a href="#ErrorResponse">ErrorResponse</a>
+    <h4 class="field-label">404</h4>
+    Recurso inexistente o no publicado (BR-15, BR-33)
+        <a href="#ErrorResponse">ErrorResponse</a>
+    <h4 class="field-label">422</h4>
+    Violación de regla de negocio (ej. montos negativos BR-14)
+        <a href="#ErrorResponse">ErrorResponse</a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="distributionRulesGet"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /distribution-rules</code></pre></div>
+    <div class="method-summary">Listar reglas de distribución publicadas (BR-16, BR-33) (<span class="nickname">distributionRulesGet</span>)</div>
+    <div class="method-notes"></div>
+
+
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      array[<a href="#DistributionRule">DistributionRule</a>]
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>[ {
+  "savings_pct" : 20,
+  "needs_pct" : 50,
+  "wants_pct" : 30,
+  "name" : "50/30/20",
+  "id" : 0
+}, {
+  "savings_pct" : 20,
+  "needs_pct" : 50,
+  "wants_pct" : 30,
+  "name" : "50/30/20",
+  "id" : 0
+} ]</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Lista de reglas activas cuya suma de porcentajes es 100%
+        
+    <h4 class="field-label">401</h4>
+    Token ausente, expirado o credenciales inválidas
+        <a href="#ErrorResponse">ErrorResponse</a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="expenseCategoriesGet"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /expense-categories</code></pre></div>
+    <div class="method-summary">Listar categorías de gastos fijos (BR-18) (<span class="nickname">expenseCategoriesGet</span>)</div>
+    <div class="method-notes"></div>
+
+
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      array[<a href="#ExpenseCategory">ExpenseCategory</a>]
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>[ {
+  "bucket" : "NEEDS",
+  "name" : "Vivienda",
+  "id" : 0
+}, {
+  "bucket" : "NEEDS",
+  "name" : "Vivienda",
+  "id" : 0
+} ]</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Lista de categorías disponibles
+        
+    <h4 class="field-label">401</h4>
+    Token ausente, expirado o credenciales inválidas
+        <a href="#ErrorResponse">ErrorResponse</a>
+  </div> <!-- method -->
+  <hr/>
+  <h1><a name="Learning">Learning</a></h1>
+  <div class="method"><a name="learningPathsGet"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /learning-paths</code></pre></div>
+    <div class="method-summary">Listar rutas de aprendizaje publicadas (BR-15) (<span class="nickname">learningPathsGet</span>)</div>
+    <div class="method-notes"></div>
+
+
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      array[<a href="#LearningPath">LearningPath</a>]
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>[ {
+  "description" : "description",
+  "id" : 0,
+  "title" : "title",
+  "modules" : [ {
+    "id" : 6,
+    "title" : "title",
+    "order_index" : 1
+  }, {
+    "id" : 6,
+    "title" : "title",
+    "order_index" : 1
+  } ]
+}, {
+  "description" : "description",
+  "id" : 0,
+  "title" : "title",
+  "modules" : [ {
+    "id" : 6,
+    "title" : "title",
+    "order_index" : 1
+  }, {
+    "id" : 6,
+    "title" : "title",
+    "order_index" : 1
+  } ]
+} ]</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Lista de rutas con sus módulos publicados
+        
+    <h4 class="field-label">401</h4>
+    Token ausente, expirado o credenciales inválidas
+        <a href="#ErrorResponse">ErrorResponse</a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="lessonsLessonIdCompletePost"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /lessons/{lessonId}/complete</code></pre></div>
+    <div class="method-summary">Marcar lección como completada (BR-09, BR-15) (<span class="nickname">lessonsLessonIdCompletePost</span>)</div>
+    <div class="method-notes"></div>
+
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">lessonId (required)</div>
+      
+            <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash;  </div>    </div>  <!-- field-items -->
+
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#LessonProgressResponse">LessonProgressResponse</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "completed_at" : "2000-01-23T04:56:07.000+00:00",
+  "completed" : true,
+  "lesson_id" : 0
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Progreso actualizado
+        <a href="#LessonProgressResponse">LessonProgressResponse</a>
+    <h4 class="field-label">401</h4>
+    Token ausente, expirado o credenciales inválidas
+        <a href="#ErrorResponse">ErrorResponse</a>
+    <h4 class="field-label">404</h4>
+    Recurso inexistente o no publicado (BR-15, BR-33)
+        <a href="#ErrorResponse">ErrorResponse</a>
+    <h4 class="field-label">409</h4>
+    Conflicto con el estado actual (email duplicado BR-01 o prerrequisito pendiente BR-09)
+        <a href="#ErrorResponse">ErrorResponse</a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="lessonsLessonIdGet"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /lessons/{lessonId}</code></pre></div>
+    <div class="method-summary">Obtener detalle de microlección (BR-09, BR-15) (<span class="nickname">lessonsLessonIdGet</span>)</div>
+    <div class="method-notes"></div>
+
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">lessonId (required)</div>
+      
+            <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash;  </div>    </div>  <!-- field-items -->
+
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#LessonDetail">LessonDetail</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "content_markdown" : "content_markdown",
+  "has_quiz" : true,
+  "id" : 0,
+  "estimated_minutes" : 6,
+  "title" : "title"
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Contenido completo de la lección
+        <a href="#LessonDetail">LessonDetail</a>
+    <h4 class="field-label">401</h4>
+    Token ausente, expirado o credenciales inválidas
+        <a href="#ErrorResponse">ErrorResponse</a>
+    <h4 class="field-label">404</h4>
+    Recurso inexistente o no publicado (BR-15, BR-33)
+        <a href="#ErrorResponse">ErrorResponse</a>
+    <h4 class="field-label">409</h4>
+    Conflicto con el estado actual (email duplicado BR-01 o prerrequisito pendiente BR-09)
+        <a href="#ErrorResponse">ErrorResponse</a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="lessonsLessonIdQuizGet"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /lessons/{lessonId}/quiz</code></pre></div>
+    <div class="method-summary">Obtener cuestionario de una lección (BR-15) (<span class="nickname">lessonsLessonIdQuizGet</span>)</div>
+    <div class="method-notes"></div>
+
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">lessonId (required)</div>
+      
+            <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash;  </div>    </div>  <!-- field-items -->
+
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#Quiz">Quiz</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "questions" : [ {
+    "options" : [ {
+      "id" : 5,
+      "text" : "text"
+    }, {
+      "id" : 5,
+      "text" : "text"
+    } ],
+    "id" : 1,
+    "prompt" : "prompt"
+  }, {
+    "options" : [ {
+      "id" : 5,
+      "text" : "text"
+    }, {
+      "id" : 5,
+      "text" : "text"
+    } ],
+    "id" : 1,
+    "prompt" : "prompt"
+  } ],
+  "id" : 0,
+  "lesson_id" : 6
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Preguntas y opciones sin revelar respuestas correctas
+        <a href="#Quiz">Quiz</a>
+    <h4 class="field-label">401</h4>
+    Token ausente, expirado o credenciales inválidas
+        <a href="#ErrorResponse">ErrorResponse</a>
+    <h4 class="field-label">404</h4>
+    Recurso inexistente o no publicado (BR-15, BR-33)
+        <a href="#ErrorResponse">ErrorResponse</a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="modulesModuleIdLessonsGet"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /modules/{moduleId}/lessons</code></pre></div>
+    <div class="method-summary">Listar lecciones de un módulo (BR-09, BR-15) (<span class="nickname">modulesModuleIdLessonsGet</span>)</div>
+    <div class="method-notes"></div>
+
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">moduleId (required)</div>
+      
+            <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash;  </div>    </div>  <!-- field-items -->
+
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      array[<a href="#LessonSummary">LessonSummary</a>]
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>[ {
+  "is_locked" : true,
+  "prerequisite_lesson_id" : 6,
+  "id" : 0,
+  "title" : "title",
+  "is_completed" : true
+}, {
+  "is_locked" : true,
+  "prerequisite_lesson_id" : 6,
+  "id" : 0,
+  "title" : "title",
+  "is_completed" : true
+} ]</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Lecciones publicadas con estado de bloqueo y completitud
+        
+    <h4 class="field-label">401</h4>
+    Token ausente, expirado o credenciales inválidas
+        <a href="#ErrorResponse">ErrorResponse</a>
+    <h4 class="field-label">404</h4>
+    Recurso inexistente o no publicado (BR-15, BR-33)
+        <a href="#ErrorResponse">ErrorResponse</a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="quizzesQuizIdAttemptsPost"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /quizzes/{quizId}/attempts</code></pre></div>
+    <div class="method-summary">Enviar respuestas de quiz y recibir retroalimentación inmediata (BR-10) (<span class="nickname">quizzesQuizIdAttemptsPost</span>)</div>
+    <div class="method-notes"></div>
+
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">quizId (required)</div>
+      
+            <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash;  </div>    </div>  <!-- field-items -->
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">body <a href="#QuizAttemptRequest">QuizAttemptRequest</a> (required)</div>
+      
+            <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash;  </div>
+                </div>  <!-- field-items -->
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#QuizAttemptResponse">QuizAttemptResponse</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "feedback" : [ {
+    "explanation" : "explanation",
+    "question_id" : 5,
+    "is_correct" : true,
+    "correct_option_id" : 5
+  }, {
+    "explanation" : "explanation",
+    "question_id" : 5,
+    "is_correct" : true,
+    "correct_option_id" : 5
+  } ],
+  "score_percentage" : 1.4658129,
+  "completed_at" : "2000-01-23T04:56:07.000+00:00",
+  "quiz_id" : 6,
+  "attempt_id" : 0,
+  "passed" : true
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">201</h4>
+    Intento evaluado con explicaciones por pregunta
+        <a href="#QuizAttemptResponse">QuizAttemptResponse</a>
+    <h4 class="field-label">400</h4>
+    Petición malformada o tipos de datos inválidos
+        <a href="#ErrorResponse">ErrorResponse</a>
+    <h4 class="field-label">401</h4>
+    Token ausente, expirado o credenciales inválidas
+        <a href="#ErrorResponse">ErrorResponse</a>
+    <h4 class="field-label">404</h4>
+    Recurso inexistente o no publicado (BR-15, BR-33)
+        <a href="#ErrorResponse">ErrorResponse</a>
+    <h4 class="field-label">422</h4>
+    Violación de regla de negocio (ej. montos negativos BR-14)
+        <a href="#ErrorResponse">ErrorResponse</a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="usersMeProgressGet"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /users/me/progress</code></pre></div>
+    <div class="method-summary">Consultar resumen de progreso educativo (HU 3.8) (<span class="nickname">usersMeProgressGet</span>)</div>
+    <div class="method-notes"></div>
+
+
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#UserProgressSummary">UserProgressSummary</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "completion_percentage" : 1.4658129,
+  "completed_lessons_count" : 0,
+  "total_published_lessons" : 6,
+  "recent_quiz_attempts" : [ {
+    "score_percentage" : 5.637376656633329,
+    "completed_at" : "2000-01-23T04:56:07.000+00:00",
+    "quiz_id" : 5
+  }, {
+    "score_percentage" : 5.637376656633329,
+    "completed_at" : "2000-01-23T04:56:07.000+00:00",
+    "quiz_id" : 5
+  } ]
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Resumen de lecciones completadas y últimos intentos de quiz
+        <a href="#UserProgressSummary">UserProgressSummary</a>
+    <h4 class="field-label">401</h4>
+    Token ausente, expirado o credenciales inválidas
+        <a href="#ErrorResponse">ErrorResponse</a>
+  </div> <!-- method -->
+  <hr/>
+
+  <h2><a name="__Models">Models</a></h2>
+  [ Jump to <a href="#__Methods">Methods</a> ]
+
+  <h3>Table of Contents</h3>
+  <ol>
+    <li><a href="#AuthResponse"><code>AuthResponse</code></a></li>
+    <li><a href="#BudgetPlanResponse"><code>BudgetPlanResponse</code></a></li>
+    <li><a href="#BudgetPlanResponse_breakdown"><code>BudgetPlanResponse_breakdown</code></a></li>
+    <li><a href="#BudgetPlanResponse_deficit_alerts"><code>BudgetPlanResponse_deficit_alerts</code></a></li>
+    <li><a href="#CreateBudgetRequest"><code>CreateBudgetRequest</code></a></li>
+    <li><a href="#CreateBudgetRequest_fixed_expenses"><code>CreateBudgetRequest_fixed_expenses</code></a></li>
+    <li><a href="#DistributionRule"><code>DistributionRule</code></a></li>
+    <li><a href="#ErrorResponse"><code>ErrorResponse</code></a></li>
+    <li><a href="#ErrorResponse_details"><code>ErrorResponse_details</code></a></li>
+    <li><a href="#ExpenseCategory"><code>ExpenseCategory</code></a></li>
+    <li><a href="#LearningPath"><code>LearningPath</code></a></li>
+    <li><a href="#LearningPath_modules"><code>LearningPath_modules</code></a></li>
+    <li><a href="#LessonDetail"><code>LessonDetail</code></a></li>
+    <li><a href="#LessonProgressResponse"><code>LessonProgressResponse</code></a></li>
+    <li><a href="#LessonSummary"><code>LessonSummary</code></a></li>
+    <li><a href="#LoginRequest"><code>LoginRequest</code></a></li>
+    <li><a href="#Quiz"><code>Quiz</code></a></li>
+    <li><a href="#QuizAttemptRequest"><code>QuizAttemptRequest</code></a></li>
+    <li><a href="#QuizAttemptRequest_answers"><code>QuizAttemptRequest_answers</code></a></li>
+    <li><a href="#QuizAttemptResponse"><code>QuizAttemptResponse</code></a></li>
+    <li><a href="#QuizAttemptResponse_feedback"><code>QuizAttemptResponse_feedback</code></a></li>
+    <li><a href="#Quiz_options"><code>Quiz_options</code></a></li>
+    <li><a href="#Quiz_questions"><code>Quiz_questions</code></a></li>
+    <li><a href="#RegisterRequest"><code>RegisterRequest</code></a></li>
+    <li><a href="#UserProfile"><code>UserProfile</code></a></li>
+    <li><a href="#UserProgressSummary"><code>UserProgressSummary</code></a></li>
+    <li><a href="#UserProgressSummary_recent_quiz_attempts"><code>UserProgressSummary_recent_quiz_attempts</code></a></li>
+  </ol>
+
+  <div class="model">
+    <h3><a name="AuthResponse"><code>AuthResponse</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">access_token (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">token_type (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: Bearer</span></div>
+<div class="param">user (optional)</div><div class="param-desc"><span class="param-type"><a href="#UserProfile">UserProfile</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="BudgetPlanResponse"><code>BudgetPlanResponse</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">budget_id (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+<div class="param">month (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">monthly_income_cop (optional)</div><div class="param-desc"><span class="param-type"><a href="#BigDecimal">BigDecimal</a></span>  </div>
+<div class="param">rule_applied (optional)</div><div class="param-desc"><span class="param-type"><a href="#DistributionRule">DistributionRule</a></span>  </div>
+<div class="param">savings_goal_cop (optional)</div><div class="param-desc"><span class="param-type"><a href="#BigDecimal">BigDecimal</a></span>  </div>
+<div class="param">total_fixed_expenses_cop (optional)</div><div class="param-desc"><span class="param-type"><a href="#BigDecimal">BigDecimal</a></span>  </div>
+<div class="param">has_deficit (optional)</div><div class="param-desc"><span class="param-type"><a href="#boolean">Boolean</a></span>  </div>
+<div class="param">deficit_alerts (optional)</div><div class="param-desc"><span class="param-type"><a href="#BudgetPlanResponse_deficit_alerts">array[BudgetPlanResponse_deficit_alerts]</a></span>  </div>
+<div class="param">breakdown (optional)</div><div class="param-desc"><span class="param-type"><a href="#BudgetPlanResponse_breakdown">array[BudgetPlanResponse_breakdown]</a></span>  </div>
+<div class="param">created_at (optional)</div><div class="param-desc"><span class="param-type"><a href="#DateTime">Date</a></span>  format: date-time</div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="BudgetPlanResponse_breakdown"><code>BudgetPlanResponse_breakdown</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">bucket (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+        <div class="param-enum-header">Enum:</div>
+        <div class="param-enum">NEEDS</div><div class="param-enum">WANTS</div><div class="param-enum">SAVINGS</div>
+<div class="param">percentage (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+<div class="param">allocated_cop (optional)</div><div class="param-desc"><span class="param-type"><a href="#BigDecimal">BigDecimal</a></span>  </div>
+<div class="param">remaining_cop (optional)</div><div class="param-desc"><span class="param-type"><a href="#BigDecimal">BigDecimal</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="BudgetPlanResponse_deficit_alerts"><code>BudgetPlanResponse_deficit_alerts</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">bucket (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+        <div class="param-enum-header">Enum:</div>
+        <div class="param-enum">NEEDS</div><div class="param-enum">WANTS</div><div class="param-enum">SAVINGS</div>
+<div class="param">allocated_cop (optional)</div><div class="param-desc"><span class="param-type"><a href="#BigDecimal">BigDecimal</a></span>  </div>
+<div class="param">spent_cop (optional)</div><div class="param-desc"><span class="param-type"><a href="#BigDecimal">BigDecimal</a></span>  </div>
+<div class="param">difference_cop (optional)</div><div class="param-desc"><span class="param-type"><a href="#BigDecimal">BigDecimal</a></span>  </div>
+<div class="param">message (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="CreateBudgetRequest"><code>CreateBudgetRequest</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">month </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: 2026-11</span></div>
+<div class="param">monthly_income_cop </div><div class="param-desc"><span class="param-type"><a href="#BigDecimal">BigDecimal</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: 2500000</span></div>
+<div class="param">distribution_rule_id </div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: 1</span></div>
+<div class="param">savings_goal_cop (optional)</div><div class="param-desc"><span class="param-type"><a href="#BigDecimal">BigDecimal</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: 400000</span></div>
+<div class="param">fixed_expenses </div><div class="param-desc"><span class="param-type"><a href="#CreateBudgetRequest_fixed_expenses">array[CreateBudgetRequest_fixed_expenses]</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="CreateBudgetRequest_fixed_expenses"><code>CreateBudgetRequest_fixed_expenses</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">category_id </div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+<div class="param">name </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: Arriendo</span></div>
+<div class="param">amount_cop </div><div class="param-desc"><span class="param-type"><a href="#BigDecimal">BigDecimal</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: 1100000</span></div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="DistributionRule"><code>DistributionRule</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">id (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+<div class="param">name (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: 50/30/20</span></div>
+<div class="param">needs_pct (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: 50</span></div>
+<div class="param">wants_pct (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: 30</span></div>
+<div class="param">savings_pct (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: 20</span></div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="ErrorResponse"><code>ErrorResponse</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">timestamp </div><div class="param-desc"><span class="param-type"><a href="#DateTime">Date</a></span>  format: date-time</div>
+<div class="param">status </div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: 422</span></div>
+<div class="param">error </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: Unprocessable Entity</span></div>
+<div class="param">code </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: BR-14_NEGATIVE_AMOUNT</span></div>
+<div class="param">message </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">details (optional)</div><div class="param-desc"><span class="param-type"><a href="#ErrorResponse_details">array[ErrorResponse_details]</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="ErrorResponse_details"><code>ErrorResponse_details</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">field (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">issue (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="ExpenseCategory"><code>ExpenseCategory</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">id (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+<div class="param">name (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: Vivienda</span></div>
+<div class="param">bucket (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+        <div class="param-enum-header">Enum:</div>
+        <div class="param-enum">NEEDS</div><div class="param-enum">WANTS</div><div class="param-enum">SAVINGS</div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="LearningPath"><code>LearningPath</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">id (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+<div class="param">title (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">description (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">modules (optional)</div><div class="param-desc"><span class="param-type"><a href="#LearningPath_modules">array[LearningPath_modules]</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="LearningPath_modules"><code>LearningPath_modules</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">id (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+<div class="param">title (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">order_index (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="LessonDetail"><code>LessonDetail</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">id (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+<div class="param">title (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">content_markdown (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">estimated_minutes (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+<div class="param">has_quiz (optional)</div><div class="param-desc"><span class="param-type"><a href="#boolean">Boolean</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="LessonProgressResponse"><code>LessonProgressResponse</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">lesson_id (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+<div class="param">completed (optional)</div><div class="param-desc"><span class="param-type"><a href="#boolean">Boolean</a></span>  </div>
+<div class="param">completed_at (optional)</div><div class="param-desc"><span class="param-type"><a href="#DateTime">Date</a></span>  format: date-time</div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="LessonSummary"><code>LessonSummary</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">id (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+<div class="param">title (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">prerequisite_lesson_id (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+<div class="param">is_locked (optional)</div><div class="param-desc"><span class="param-type"><a href="#boolean">Boolean</a></span>  </div>
+<div class="param">is_completed (optional)</div><div class="param-desc"><span class="param-type"><a href="#boolean">Boolean</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="LoginRequest"><code>LoginRequest</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">email </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  format: email</div>
+<div class="param">password </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  format: password</div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="Quiz"><code>Quiz</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">id (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+<div class="param">lesson_id (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+<div class="param">questions (optional)</div><div class="param-desc"><span class="param-type"><a href="#Quiz_questions">array[Quiz_questions]</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="QuizAttemptRequest"><code>QuizAttemptRequest</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">answers </div><div class="param-desc"><span class="param-type"><a href="#QuizAttemptRequest_answers">array[QuizAttemptRequest_answers]</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="QuizAttemptRequest_answers"><code>QuizAttemptRequest_answers</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">question_id </div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+<div class="param">selected_option_id </div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="QuizAttemptResponse"><code>QuizAttemptResponse</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">attempt_id (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+<div class="param">quiz_id (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+<div class="param">score_percentage (optional)</div><div class="param-desc"><span class="param-type"><a href="#float">Float</a></span>  format: float</div>
+<div class="param">passed (optional)</div><div class="param-desc"><span class="param-type"><a href="#boolean">Boolean</a></span>  </div>
+<div class="param">completed_at (optional)</div><div class="param-desc"><span class="param-type"><a href="#DateTime">Date</a></span>  format: date-time</div>
+<div class="param">feedback (optional)</div><div class="param-desc"><span class="param-type"><a href="#QuizAttemptResponse_feedback">array[QuizAttemptResponse_feedback]</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="QuizAttemptResponse_feedback"><code>QuizAttemptResponse_feedback</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">question_id (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+<div class="param">is_correct (optional)</div><div class="param-desc"><span class="param-type"><a href="#boolean">Boolean</a></span>  </div>
+<div class="param">correct_option_id (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+<div class="param">explanation (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="Quiz_options"><code>Quiz_options</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">id (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+<div class="param">text (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="Quiz_questions"><code>Quiz_questions</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">id (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+<div class="param">prompt (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">options (optional)</div><div class="param-desc"><span class="param-type"><a href="#Quiz_options">array[Quiz_options]</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="RegisterRequest"><code>RegisterRequest</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">full_name </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: Ana Gómez</span></div>
+<div class="param">email </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  format: email</div>
+          <div class="param-desc"><span class="param-type">example: ana.gomez@unal.edu.co</span></div>
+<div class="param">password </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  format: password</div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="UserProfile"><code>UserProfile</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">id (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+<div class="param">full_name (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">email (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  format: email</div>
+<div class="param">role (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+        <div class="param-enum-header">Enum:</div>
+        <div class="param-enum">LEARNER</div><div class="param-enum">ADMIN</div>
+<div class="param">is_active (optional)</div><div class="param-desc"><span class="param-type"><a href="#boolean">Boolean</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="UserProgressSummary"><code>UserProgressSummary</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">completed_lessons_count (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+<div class="param">total_published_lessons (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+<div class="param">completion_percentage (optional)</div><div class="param-desc"><span class="param-type"><a href="#float">Float</a></span>  format: float</div>
+<div class="param">recent_quiz_attempts (optional)</div><div class="param-desc"><span class="param-type"><a href="#UserProgressSummary_recent_quiz_attempts">array[UserProgressSummary_recent_quiz_attempts]</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="UserProgressSummary_recent_quiz_attempts"><code>UserProgressSummary_recent_quiz_attempts</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">quiz_id (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+<div class="param">score_percentage (optional)</div><div class="param-desc"><span class="param-type"><a href="#BigDecimal">BigDecimal</a></span>  </div>
+<div class="param">completed_at (optional)</div><div class="param-desc"><span class="param-type"><a href="#DateTime">Date</a></span>  format: date-time</div>
+    </div>  <!-- field-items -->
+  </div>
+  </body>
+</html>
